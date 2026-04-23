@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — iMORSE</title>
+<meta name="description" content="Contact Professor Andrew Flitman and iMORSE. Scoping calls are free. Engagements are confidential.">
+<link rel="icon" href="assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Caladea:ital,wght@0,400;0,700;1,400;1,700&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site" data-screen-label="Contact — Header">
+  <div class="wrap bar">
+    <a href="index.html" class="brand" aria-label="iMORSE home"><img src="assets/logo-primary.png" alt="iMORSE"></a>
+    <button class="mob-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="var n=document.getElementById('primary-nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="square"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="primary-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html" class="active">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero" data-screen-label="Contact — Page hero">
+  <div class="wrap">
+    <div class="kicker">Contact</div>
+    <h1>Send the question.</h1>
+    <p class="lede">A short note is usually enough. Scoping calls are free. Engagements are confidential.</p>
+  </div>
+</section>
+
+<!--
+  Netlify build-time detection: this hidden, static copy of the form is what the
+  Netlify build bot scans to register the form. It mirrors the visible form's
+  fields and is never rendered to real users. Do not remove.
+-->
+<form name="contact" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name">
+  <input type="text" name="role">
+  <input type="email" name="email">
+  <input type="text" name="organisation">
+  <select name="area"><option></option></select>
+  <textarea name="message"></textarea>
+</form>
+
+<section class="section" data-screen-label="Contact — Form">
+  <div class="wrap">
+    <div class="contact-grid">
+
+      <aside class="contact-info" aria-label="Direct contact details">
+        <span class="rule-blue"></span>
+        <h2>Direct details.</h2>
+        <p>If you prefer email, the direct address is below. Response time is typically within two business days.</p>
+        <dl>
+          <dt>Email</dt>
+          <dd><a href="mailto:aflitman@imorse.com.au">aflitman@imorse.com.au</a></dd>
+
+          <dt>Principal</dt>
+          <dd>Professor Andrew Flitman</dd>
+
+          <dt>Entity</dt>
+          <dd>Flitman Research Pty Ltd trading as iMORSE<br>ACN 113 023 733</dd>
+
+          <dt>Offices</dt>
+          <dd>Melbourne &amp; Torquay, Victoria, Australia</dd>
+
+          <dt>LinkedIn</dt>
+          <dd><a href="https://www.linkedin.com/" rel="noopener">Professor Andrew Flitman</a></dd>
+
+          <dt>Confidentiality</dt>
+          <dd>All enquiries are treated as confidential. iMORSE does not share client names or engagement details without written permission.</dd>
+        </dl>
+      </aside>
+
+      <form
+        class="form-card"
+        id="enquiry-form"
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+        action="/thanks.html"
+        aria-labelledby="form-title"
+      >
+        <h2 id="form-title">Enquiry form.</h2>
+        <div class="sub">Fields marked with a red asterisk are required.</div>
+
+        <!-- Required for Netlify Forms to associate this submission with the form named "contact". -->
+        <input type="hidden" name="form-name" value="contact">
+        <!-- Honeypot field: invisible to users, bots fill it in and get silently rejected. -->
+        <p class="hp" aria-hidden="true">
+          <label>Leave this field empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+        </p>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="name">Your name <span class="req" aria-hidden="true">*</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" required placeholder=" ">
+          </div>
+          <div class="field">
+            <label for="role">Role</label>
+            <input id="role" name="role" type="text" autocomplete="organization-title" placeholder="e.g. Chair, Vice-Chancellor, Registrar">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" required placeholder=" ">
+          </div>
+          <div class="field">
+            <label for="organisation">Organisation</label>
+            <input id="organisation" name="organisation" type="text" autocomplete="organization" placeholder=" ">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="area">Area of enquiry</label>
+          <select id="area" name="area">
+            <option value="">Please select — optional</option>
+            <option>Governance &amp; Academic Boards</option>
+            <option>Strategy &amp; planning</option>
+            <option>Regulation &amp; quality assurance</option>
+            <option>Analytics &amp; modelling</option>
+            <option>Speaking or panel engagement</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="message">Your question <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="message" name="message" required placeholder="A short paragraph is enough. What is the decision in front of the board or the leadership team, and when is it due?"></textarea>
+          <div class="hint">Please avoid commercially sensitive detail until a non-disclosure agreement is in place.</div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px">
+          <button type="submit" class="btn btn-primary" id="submit-btn">Send enquiry</button>
+          <span class="hint" style="margin:0">Or email <a href="mailto:aflitman@imorse.com.au">aflitman@imorse.com.au</a></span>
+        </div>
+
+        <div class="form-note">
+          Submissions are handled by Netlify Forms and delivered to Professor Flitman directly. No enquiry data is stored on this website.
+        </div>
+      </form>
+
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" data-screen-label="Contact — Expect">
+  <div class="wrap-narrow">
+    <span class="rule-blue"></span>
+    <h2 style="font-size:28px;margin-bottom:12px">What to expect next.</h2>
+    <ul class="bullets" style="margin-top:18px">
+      <li><b>01</b><span><strong>Acknowledgement.</strong> A short reply within two business days, confirming receipt and proposing a time to talk.</span></li>
+      <li><b>02</b><span><strong>Scoping call.</strong> Thirty to forty-five minutes, free, by phone or video. Its purpose is to confirm the question and whether iMORSE is the right fit.</span></li>
+      <li><b>03</b><span><strong>Written proposal.</strong> If the engagement is a fit, a one-page proposal follows within a week — scope, method, fee, timeline, deliverables.</span></li>
+      <li><b>04</b><span><strong>Or a redirect.</strong> If iMORSE is not the right fit, we will say so, and — where possible — point you to someone who is.</span></li>
+    </ul>
+  </div>
+</section>
+
+<footer class="site" data-screen-label="Contact — Footer">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <img class="logo" src="assets/logo-primary.png" alt="iMORSE">
+        <div class="tag">Decoding Higher Education</div>
+        <address>
+          Flitman Research Pty Ltd<br>
+          trading as iMORSE<br>
+          ACN 113 023 733<br>
+          Melbourne &amp; Torquay, Victoria, Australia
+        </address>
+      </div>
+      <div>
+        <h4>Practice</h4>
+        <a href="about.html">About iMORSE</a>
+        <a href="services.html">Services</a>
+        <a href="services.html#governance">Governance</a>
+        <a href="services.html#analytics">Analytics</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="contact.html">Enquiry form</a>
+        <a href="mailto:aflitman@imorse.com.au">aflitman@imorse.com.au</a>
+        <a href="https://www.linkedin.com/" rel="noopener">LinkedIn</a>
+      </div>
+      <div>
+        <h4>Regions</h4>
+        <a href="about.html#reach">Australia</a>
+        <a href="about.html#reach">Asia</a>
+        <a href="about.html#reach">Middle East</a>
+        <a href="about.html#reach">Europe</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Flitman Research Pty Ltd trading as iMORSE. All rights reserved.</span>
+      <span>Engagements are confidential.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
