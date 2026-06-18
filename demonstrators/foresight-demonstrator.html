@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<!-- Individual Private Provider - MD115 and Onshore Commission Ban: Impact on Via... - dual-mode SD dashboard. Author: Andrew Flitman (iMORSE).
+     Self-contained: validated engine (generated from model_spec), derived series,
+     and presentation layer embedded; no external dependencies. -->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Individual Private Provider - MD115 and Onshore Commission Ban: Impact on Via...</title>
+<style>
+:root{--ink:#1E2A33;--mute:#5B6470;--paper:#F6F4EF;--card:#fff;--hair:#E4E0D8;--A:#2E5E8C;--B:#B5651D;}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+ padding:22px 20px;line-height:1.5;max-width:1180px;margin:0 auto}
+.kicker{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+h1{font-size:23px;margin:4px 0 2px} .sub{color:var(--mute);font-size:14px;margin-bottom:14px}
+.modebar{display:flex;gap:8px;margin:10px 0 14px;flex-wrap:wrap}
+.modebtn{font-size:13px;padding:7px 13px;border-radius:7px;cursor:pointer;border:1px solid var(--hair);background:#fff;color:var(--ink)}
+.tiles{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.tile{background:var(--card);border:1px solid var(--hair);border-radius:10px;padding:10px 14px;min-width:130px}
+.tile .tl{font-size:11px;color:var(--mute)} .tile .tv{font-size:22px;font-weight:600}
+.note{background:#EEEAE1;border:1px solid var(--hair);border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:14px}
+.grid{display:flex;gap:16px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:14px;flex:1 1 320px}
+.console{flex:1 1 280px}
+.srow{margin:10px 0}
+.slab{display:flex;justify-content:space-between;font-size:12.5px}
+.sval{font-family:ui-monospace,Menlo,monospace}
+input[type=range]{width:100%}
+.sunit{font-size:11px;color:var(--mute)}
+.abtoggle{display:flex;gap:6px;margin:4px 0 10px}
+.abbtn{font-size:12px;padding:4px 12px;border-radius:6px;border:1px solid var(--hair);background:#fff;cursor:pointer}
+.charts{flex:2 1 520px;display:flex;flex-direction:column;gap:14px}
+.ctitle{font-size:14px;font-weight:600;margin-bottom:2px}
+.legend{font-size:12px;color:var(--mute);margin-top:4px}
+.assume{margin-top:20px} .assume h2{font-size:16px} .assume p{font-size:13px;margin:0 0 8px}
+.foot{margin-top:18px;padding-top:10px;border-top:1px solid var(--hair);font-size:11.5px;color:var(--mute)}
+.locked{font-size:13px;color:var(--mute)}
+#chartTip{position:fixed;display:none;z-index:50;background:#fff;border:1px solid var(--hair);border-radius:6px;box-shadow:0 2px 10px rgba(30,42,51,.18);padding:8px 10px;font-size:12px;color:var(--ink);pointer-events:none;min-width:180px}
+#chartTip .tt{font-weight:600;margin-bottom:4px;color:var(--mute)}
+#chartTip .tr{display:flex;align-items:center;gap:6px;margin:2px 0;white-space:nowrap}
+#chartTip .sw{width:10px;height:10px;border-radius:2px;display:inline-block;flex:none}
+#chartTip .tvv{margin-left:auto;font-weight:600;padding-left:10px}
+.gloss{margin-top:14px;border-top:1px solid var(--hair);padding-top:10px}
+.gloss h3{font-size:11px;margin:0 0 8px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.gloss .gi{margin:0 0 9px;font-size:12px;line-height:1.45;color:var(--ink)}
+.gloss .gi b{display:block}
+.gloss .gr{color:var(--mute)}
+.legend .ki{display:inline-flex;align-items:center;gap:5px;margin-right:12px}
+.legend .ksw{width:14px;height:3px;display:inline-block;border-radius:1px}
+</style></head>
+<body>
+<div class="kicker" id="kicker"></div>
+<h1 id="title"></h1>
+<div class="sub" id="sub"></div>
+<div class="modebar" id="modebar"></div>
+<div class="tiles" id="tiles"></div>
+<div class="note" id="note"></div>
+<div class="grid">
+  <div class="card console" id="console"></div>
+  <div class="charts" id="charts"></div>
+</div>
+<div class="assume" id="assume"></div>
+<div class="foot" id="foot"></div>
+
+<script>
+/* VALIDATED ENGINE (generated from model_spec; do not edit) */
+// AUTO-GENERATED from model_spec by build_js_engine.py. Do not edit by hand;
+// regenerate from the spec. Bit-identical to the Python reference (sd_engine.py).
+"use strict";
+function MAX(){ return Math.max.apply(null, arguments); }
+function MIN(){ return Math.min.apply(null, arguments); }
+function CLIP(x, lo, hi){ return x < lo ? lo : (x > hi ? hi : x); }
+function EXP(x){ return Math.exp(x); }
+function LOG(x){ return Math.log(x); }
+function LN(x){ return Math.log(x); }
+function ABS(x){ return Math.abs(x); }
+function SQRT(x){ return Math.sqrt(x); }
+function POW(a, b){ return Math.pow(a, b); }
+
+const SIM = {"start": 0, "stop": 12, "dt": 0.125, "method": "rk4", "time_units": "quarter"};
+const STOCK_NAMES = ["CoE_pipeline", "enrolled_students", "agent_confidence", "provider_reputation", "cash_reserves", "perceived_utilisation"];
+const AUX_ORDER = ["cash_runway", "cost_control_intensity", "spend_capacity_factor", "recruitment_marketing_spend", "agent_recruitment_effort", "reputation_pull", "coe_creation", "tier2_onset", "tier3_onset", "processing_speed", "commencements", "pipeline_dropout", "ban_active", "onshore_commission_incentive", "onshore_transfer_in", "transfer_out", "completion", "operating_cost", "annual_commencement_run_rate", "utilisation_target", "target_confidence", "target_reputation", "domestic_students", "international_tuition_revenue", "domestic_tuition_revenue"];
+const REPORT_VARS = ["CoE_pipeline", "enrolled_students", "agent_confidence", "provider_reputation", "cash_reserves", "perceived_utilisation", "cash_runway", "cost_control_intensity", "spend_capacity_factor", "recruitment_marketing_spend", "agent_recruitment_effort", "reputation_pull", "coe_creation", "tier2_onset", "tier3_onset", "processing_speed", "commencements", "pipeline_dropout", "ban_active", "onshore_commission_incentive", "onshore_transfer_in", "transfer_out", "completion", "operating_cost", "annual_commencement_run_rate", "utilisation_target", "target_confidence", "target_reputation", "domestic_students", "international_tuition_revenue", "domestic_tuition_revenue"];
+const BASE_PARAMS = {"coe_scale": 265, "base_commencement_rate": 0.7, "base_dropout_rate": 0.05, "dropout_speed_sens": 1.0, "base_transfer_in": 40, "base_churn_rate": 0.02, "churn_commission_sens": 1.0, "average_course_length": 12, "base_marketing_spend": 600000, "target_runway": 1.5, "cost_cut_max": 0.3, "rep_pull_base": 0.5, "rep_pull_sens": 0.6, "nosc_allocation": 850, "quarters_per_year": 4, "p1_speed": 1.0, "p2_speed": 0.38, "p3_speed": 0.15, "p2_threshold": 0.8, "p3_threshold": 1.15, "threshold_band": 0.05, "conf_floor": 0.0, "conf_proc_weight": 0.6, "conf_rep_weight": 0.4, "confidence_rise_time": 3, "confidence_fall_time": 0.5, "reputation_adjust_time": 4, "utilisation_adjust_time": 1, "rep_base": 0.65, "rep_enrol_sens": 0.4, "rep_costcut_sens": 0.3, "base_commission_level": 1.0, "ban_fraction": 0.85, "commission_ban_time": 2, "ban_ramp": 0.5, "intl_fee_per_quarter": 8000, "domestic_fee_per_quarter": 4000, "domestic_share": 0.2, "offshore_market_demand": 1.0, "baseline_intl_enrolment": 1800, "base_operating_cost": 15200000, "other_income": 0};
+const STOCK_DEFS = {"CoE_pipeline": {"inflows": ["coe_pipeline_in"], "outflows": ["coe_pipeline_out"]}, "enrolled_students": {"inflows": ["enrolled_in"], "outflows": ["enrolled_out"]}, "agent_confidence": {"inflows": ["confidence_gain_flow"], "outflows": ["confidence_loss_flow"]}, "provider_reputation": {"inflows": ["rep_gain_flow"], "outflows": ["rep_loss_flow"]}, "cash_reserves": {"inflows": ["revenue_inflow"], "outflows": ["cost_outflow"]}, "perceived_utilisation": {"inflows": ["perceived_util_in"], "outflows": ["perceived_util_out"]}};
+
+function initials(P) {
+  const coe_scale = P["coe_scale"];
+  const base_commencement_rate = P["base_commencement_rate"];
+  const base_dropout_rate = P["base_dropout_rate"];
+  const dropout_speed_sens = P["dropout_speed_sens"];
+  const base_transfer_in = P["base_transfer_in"];
+  const base_churn_rate = P["base_churn_rate"];
+  const churn_commission_sens = P["churn_commission_sens"];
+  const average_course_length = P["average_course_length"];
+  const base_marketing_spend = P["base_marketing_spend"];
+  const target_runway = P["target_runway"];
+  const cost_cut_max = P["cost_cut_max"];
+  const rep_pull_base = P["rep_pull_base"];
+  const rep_pull_sens = P["rep_pull_sens"];
+  const nosc_allocation = P["nosc_allocation"];
+  const quarters_per_year = P["quarters_per_year"];
+  const p1_speed = P["p1_speed"];
+  const p2_speed = P["p2_speed"];
+  const p3_speed = P["p3_speed"];
+  const p2_threshold = P["p2_threshold"];
+  const p3_threshold = P["p3_threshold"];
+  const threshold_band = P["threshold_band"];
+  const conf_floor = P["conf_floor"];
+  const conf_proc_weight = P["conf_proc_weight"];
+  const conf_rep_weight = P["conf_rep_weight"];
+  const confidence_rise_time = P["confidence_rise_time"];
+  const confidence_fall_time = P["confidence_fall_time"];
+  const reputation_adjust_time = P["reputation_adjust_time"];
+  const utilisation_adjust_time = P["utilisation_adjust_time"];
+  const rep_base = P["rep_base"];
+  const rep_enrol_sens = P["rep_enrol_sens"];
+  const rep_costcut_sens = P["rep_costcut_sens"];
+  const base_commission_level = P["base_commission_level"];
+  const ban_fraction = P["ban_fraction"];
+  const commission_ban_time = P["commission_ban_time"];
+  const ban_ramp = P["ban_ramp"];
+  const intl_fee_per_quarter = P["intl_fee_per_quarter"];
+  const domestic_fee_per_quarter = P["domestic_fee_per_quarter"];
+  const domestic_share = P["domestic_share"];
+  const offshore_market_demand = P["offshore_market_demand"];
+  const baseline_intl_enrolment = P["baseline_intl_enrolment"];
+  const base_operating_cost = P["base_operating_cost"];
+  const other_income = P["other_income"];
+  const s0 = {};
+  s0["CoE_pipeline"] = 260.0;
+  s0["enrolled_students"] = 1800.0;
+  s0["agent_confidence"] = 0.8;
+  s0["provider_reputation"] = 0.65;
+  s0["cash_reserves"] = 30000000.0;
+  s0["perceived_utilisation"] = 0.55;
+  return s0;
+}
+
+function auxValues(S, P, t) {
+  const coe_scale = P["coe_scale"];
+  const base_commencement_rate = P["base_commencement_rate"];
+  const base_dropout_rate = P["base_dropout_rate"];
+  const dropout_speed_sens = P["dropout_speed_sens"];
+  const base_transfer_in = P["base_transfer_in"];
+  const base_churn_rate = P["base_churn_rate"];
+  const churn_commission_sens = P["churn_commission_sens"];
+  const average_course_length = P["average_course_length"];
+  const base_marketing_spend = P["base_marketing_spend"];
+  const target_runway = P["target_runway"];
+  const cost_cut_max = P["cost_cut_max"];
+  const rep_pull_base = P["rep_pull_base"];
+  const rep_pull_sens = P["rep_pull_sens"];
+  const nosc_allocation = P["nosc_allocation"];
+  const quarters_per_year = P["quarters_per_year"];
+  const p1_speed = P["p1_speed"];
+  const p2_speed = P["p2_speed"];
+  const p3_speed = P["p3_speed"];
+  const p2_threshold = P["p2_threshold"];
+  const p3_threshold = P["p3_threshold"];
+  const threshold_band = P["threshold_band"];
+  const conf_floor = P["conf_floor"];
+  const conf_proc_weight = P["conf_proc_weight"];
+  const conf_rep_weight = P["conf_rep_weight"];
+  const confidence_rise_time = P["confidence_rise_time"];
+  const confidence_fall_time = P["confidence_fall_time"];
+  const reputation_adjust_time = P["reputation_adjust_time"];
+  const utilisation_adjust_time = P["utilisation_adjust_time"];
+  const rep_base = P["rep_base"];
+  const rep_enrol_sens = P["rep_enrol_sens"];
+  const rep_costcut_sens = P["rep_costcut_sens"];
+  const base_commission_level = P["base_commission_level"];
+  const ban_fraction = P["ban_fraction"];
+  const commission_ban_time = P["commission_ban_time"];
+  const ban_ramp = P["ban_ramp"];
+  const intl_fee_per_quarter = P["intl_fee_per_quarter"];
+  const domestic_fee_per_quarter = P["domestic_fee_per_quarter"];
+  const domestic_share = P["domestic_share"];
+  const offshore_market_demand = P["offshore_market_demand"];
+  const baseline_intl_enrolment = P["baseline_intl_enrolment"];
+  const base_operating_cost = P["base_operating_cost"];
+  const other_income = P["other_income"];
+  const CoE_pipeline = S["CoE_pipeline"];
+  const enrolled_students = S["enrolled_students"];
+  const agent_confidence = S["agent_confidence"];
+  const provider_reputation = S["provider_reputation"];
+  const cash_reserves = S["cash_reserves"];
+  const perceived_utilisation = S["perceived_utilisation"];
+  const TIME = t;
+  const cash_runway = (cash_reserves / base_operating_cost);
+  const cost_control_intensity = (MIN(1, MAX(0, (target_runway - cash_runway) / target_runway)));
+  const spend_capacity_factor = (MAX(0, MIN(1, cash_runway / target_runway)));
+  const recruitment_marketing_spend = (base_marketing_spend * spend_capacity_factor * (1 - cost_cut_max * cost_control_intensity));
+  const agent_recruitment_effort = (agent_confidence * (recruitment_marketing_spend / base_marketing_spend));
+  const reputation_pull = (rep_pull_base + rep_pull_sens * provider_reputation);
+  const coe_creation = (coe_scale * agent_recruitment_effort * offshore_market_demand * reputation_pull);
+  const tier2_onset = (MIN(1, MAX(0, (perceived_utilisation - p2_threshold) / threshold_band)));
+  const tier3_onset = (MIN(1, MAX(0, (perceived_utilisation - p3_threshold) / threshold_band)));
+  const processing_speed = (p1_speed * (1 - tier2_onset) + p2_speed * tier2_onset * (1 - tier3_onset) + p3_speed * tier3_onset);
+  const commencements = (CoE_pipeline * base_commencement_rate * processing_speed);
+  const pipeline_dropout = (CoE_pipeline * base_dropout_rate * (1 + dropout_speed_sens * (1 - processing_speed)));
+  const ban_active = (MIN(1, MAX(0, (TIME - commission_ban_time) / ban_ramp)));
+  const onshore_commission_incentive = (base_commission_level * (1 - ban_fraction * ban_active));
+  const onshore_transfer_in = (base_transfer_in * onshore_commission_incentive * (recruitment_marketing_spend / base_marketing_spend));
+  const transfer_out = (enrolled_students * base_churn_rate * (1 + churn_commission_sens * onshore_commission_incentive));
+  const completion = (enrolled_students / average_course_length);
+  const operating_cost = (base_operating_cost * (1 - cost_cut_max * cost_control_intensity) + recruitment_marketing_spend);
+  const annual_commencement_run_rate = ((commencements + onshore_transfer_in) * quarters_per_year);
+  const utilisation_target = (annual_commencement_run_rate / nosc_allocation);
+  const target_confidence = (MIN(1, MAX(0, conf_floor + conf_proc_weight * processing_speed + conf_rep_weight * provider_reputation)));
+  const target_reputation = (MIN(1, MAX(0, rep_base + rep_enrol_sens * (enrolled_students / baseline_intl_enrolment - 1) - rep_costcut_sens * cost_control_intensity)));
+  const domestic_students = (baseline_intl_enrolment * domestic_share / MAX(0.1, 1 - domestic_share));
+  const international_tuition_revenue = (enrolled_students * intl_fee_per_quarter);
+  const domestic_tuition_revenue = (domestic_students * domestic_fee_per_quarter);
+  return {"cash_runway": cash_runway, "cost_control_intensity": cost_control_intensity, "spend_capacity_factor": spend_capacity_factor, "recruitment_marketing_spend": recruitment_marketing_spend, "agent_recruitment_effort": agent_recruitment_effort, "reputation_pull": reputation_pull, "coe_creation": coe_creation, "tier2_onset": tier2_onset, "tier3_onset": tier3_onset, "processing_speed": processing_speed, "commencements": commencements, "pipeline_dropout": pipeline_dropout, "ban_active": ban_active, "onshore_commission_incentive": onshore_commission_incentive, "onshore_transfer_in": onshore_transfer_in, "transfer_out": transfer_out, "completion": completion, "operating_cost": operating_cost, "annual_commencement_run_rate": annual_commencement_run_rate, "utilisation_target": utilisation_target, "target_confidence": target_confidence, "target_reputation": target_reputation, "domestic_students": domestic_students, "international_tuition_revenue": international_tuition_revenue, "domestic_tuition_revenue": domestic_tuition_revenue};
+}
+
+function deriv(S, P, t) {
+  const coe_scale = P["coe_scale"];
+  const base_commencement_rate = P["base_commencement_rate"];
+  const base_dropout_rate = P["base_dropout_rate"];
+  const dropout_speed_sens = P["dropout_speed_sens"];
+  const base_transfer_in = P["base_transfer_in"];
+  const base_churn_rate = P["base_churn_rate"];
+  const churn_commission_sens = P["churn_commission_sens"];
+  const average_course_length = P["average_course_length"];
+  const base_marketing_spend = P["base_marketing_spend"];
+  const target_runway = P["target_runway"];
+  const cost_cut_max = P["cost_cut_max"];
+  const rep_pull_base = P["rep_pull_base"];
+  const rep_pull_sens = P["rep_pull_sens"];
+  const nosc_allocation = P["nosc_allocation"];
+  const quarters_per_year = P["quarters_per_year"];
+  const p1_speed = P["p1_speed"];
+  const p2_speed = P["p2_speed"];
+  const p3_speed = P["p3_speed"];
+  const p2_threshold = P["p2_threshold"];
+  const p3_threshold = P["p3_threshold"];
+  const threshold_band = P["threshold_band"];
+  const conf_floor = P["conf_floor"];
+  const conf_proc_weight = P["conf_proc_weight"];
+  const conf_rep_weight = P["conf_rep_weight"];
+  const confidence_rise_time = P["confidence_rise_time"];
+  const confidence_fall_time = P["confidence_fall_time"];
+  const reputation_adjust_time = P["reputation_adjust_time"];
+  const utilisation_adjust_time = P["utilisation_adjust_time"];
+  const rep_base = P["rep_base"];
+  const rep_enrol_sens = P["rep_enrol_sens"];
+  const rep_costcut_sens = P["rep_costcut_sens"];
+  const base_commission_level = P["base_commission_level"];
+  const ban_fraction = P["ban_fraction"];
+  const commission_ban_time = P["commission_ban_time"];
+  const ban_ramp = P["ban_ramp"];
+  const intl_fee_per_quarter = P["intl_fee_per_quarter"];
+  const domestic_fee_per_quarter = P["domestic_fee_per_quarter"];
+  const domestic_share = P["domestic_share"];
+  const offshore_market_demand = P["offshore_market_demand"];
+  const baseline_intl_enrolment = P["baseline_intl_enrolment"];
+  const base_operating_cost = P["base_operating_cost"];
+  const other_income = P["other_income"];
+  const CoE_pipeline = S["CoE_pipeline"];
+  const enrolled_students = S["enrolled_students"];
+  const agent_confidence = S["agent_confidence"];
+  const provider_reputation = S["provider_reputation"];
+  const cash_reserves = S["cash_reserves"];
+  const perceived_utilisation = S["perceived_utilisation"];
+  const TIME = t;
+  const cash_runway = (cash_reserves / base_operating_cost);
+  const cost_control_intensity = (MIN(1, MAX(0, (target_runway - cash_runway) / target_runway)));
+  const spend_capacity_factor = (MAX(0, MIN(1, cash_runway / target_runway)));
+  const recruitment_marketing_spend = (base_marketing_spend * spend_capacity_factor * (1 - cost_cut_max * cost_control_intensity));
+  const agent_recruitment_effort = (agent_confidence * (recruitment_marketing_spend / base_marketing_spend));
+  const reputation_pull = (rep_pull_base + rep_pull_sens * provider_reputation);
+  const coe_creation = (coe_scale * agent_recruitment_effort * offshore_market_demand * reputation_pull);
+  const tier2_onset = (MIN(1, MAX(0, (perceived_utilisation - p2_threshold) / threshold_band)));
+  const tier3_onset = (MIN(1, MAX(0, (perceived_utilisation - p3_threshold) / threshold_band)));
+  const processing_speed = (p1_speed * (1 - tier2_onset) + p2_speed * tier2_onset * (1 - tier3_onset) + p3_speed * tier3_onset);
+  const commencements = (CoE_pipeline * base_commencement_rate * processing_speed);
+  const pipeline_dropout = (CoE_pipeline * base_dropout_rate * (1 + dropout_speed_sens * (1 - processing_speed)));
+  const ban_active = (MIN(1, MAX(0, (TIME - commission_ban_time) / ban_ramp)));
+  const onshore_commission_incentive = (base_commission_level * (1 - ban_fraction * ban_active));
+  const onshore_transfer_in = (base_transfer_in * onshore_commission_incentive * (recruitment_marketing_spend / base_marketing_spend));
+  const transfer_out = (enrolled_students * base_churn_rate * (1 + churn_commission_sens * onshore_commission_incentive));
+  const completion = (enrolled_students / average_course_length);
+  const operating_cost = (base_operating_cost * (1 - cost_cut_max * cost_control_intensity) + recruitment_marketing_spend);
+  const annual_commencement_run_rate = ((commencements + onshore_transfer_in) * quarters_per_year);
+  const utilisation_target = (annual_commencement_run_rate / nosc_allocation);
+  const target_confidence = (MIN(1, MAX(0, conf_floor + conf_proc_weight * processing_speed + conf_rep_weight * provider_reputation)));
+  const target_reputation = (MIN(1, MAX(0, rep_base + rep_enrol_sens * (enrolled_students / baseline_intl_enrolment - 1) - rep_costcut_sens * cost_control_intensity)));
+  const domestic_students = (baseline_intl_enrolment * domestic_share / MAX(0.1, 1 - domestic_share));
+  const international_tuition_revenue = (enrolled_students * intl_fee_per_quarter);
+  const domestic_tuition_revenue = (domestic_students * domestic_fee_per_quarter);
+  const coe_pipeline_in = (coe_creation);
+  const coe_pipeline_out = (commencements + pipeline_dropout);
+  const enrolled_in = (commencements + onshore_transfer_in);
+  const enrolled_out = (transfer_out + completion);
+  const confidence_gain_flow = (MAX(0, target_confidence - agent_confidence) / confidence_rise_time);
+  const confidence_loss_flow = (MAX(0, agent_confidence - target_confidence) / confidence_fall_time);
+  const rep_gain_flow = (MAX(0, target_reputation - provider_reputation) / reputation_adjust_time);
+  const rep_loss_flow = (MAX(0, provider_reputation - target_reputation) / reputation_adjust_time);
+  const revenue_inflow = (international_tuition_revenue + domestic_tuition_revenue + other_income);
+  const cost_outflow = (operating_cost);
+  const perceived_util_in = (MAX(0, utilisation_target - perceived_utilisation) / utilisation_adjust_time);
+  const perceived_util_out = (MAX(0, perceived_utilisation - utilisation_target) / utilisation_adjust_time);
+  const d = {};
+  d["CoE_pipeline"] = (coe_pipeline_in) - (coe_pipeline_out);
+  d["enrolled_students"] = (enrolled_in) - (enrolled_out);
+  d["agent_confidence"] = (confidence_gain_flow) - (confidence_loss_flow);
+  d["provider_reputation"] = (rep_gain_flow) - (rep_loss_flow);
+  d["cash_reserves"] = (revenue_inflow) - (cost_outflow);
+  d["perceived_utilisation"] = (perceived_util_in) - (perceived_util_out);
+  return d;
+}
+
+// Core stepper. opts may carry { initialStocks, start, stop } so the forward
+// run can be seeded from the calibration endpoint at t0. The integrator is
+// byte-identical to the checkpoint path validated in Stage 5.
+function stepAll(overrides, opts) {
+  opts = opts || {};
+  const P = Object.assign({}, BASE_PARAMS, overrides || {});
+  const dt = SIM.dt;
+  const start = (opts.start !== undefined) ? opts.start : SIM.start;
+  const stop = (opts.stop !== undefined) ? opts.stop : SIM.stop;
+  const method = (SIM.method || "rk4").toLowerCase();
+  let S = opts.initialStocks ? Object.assign({}, opts.initialStocks) : initials(P);
+  const mins = {}; STOCK_NAMES.forEach(s => mins[s] = S[s]);
+  const times = [];
+  const series = {}; REPORT_VARS.forEach(v => series[v] = []);
+  const STOCKSET = new Set(STOCK_NAMES);
+  function record(tt) {
+    const a = auxValues(S, P, tt);
+    times.push(tt);
+    REPORT_VARS.forEach(v => series[v].push(STOCKSET.has(v) ? S[v] : a[v]));
+  }
+  let t = start;
+  const nsteps = Math.round((stop - start) / dt);
+  record(start);
+  for (let i = 0; i < nsteps; i++) {
+    if (method === "euler") {
+      const k1 = deriv(S, P, t);
+      const ns = {}; STOCK_NAMES.forEach(s => ns[s] = S[s] + dt * k1[s]); S = ns;
+    } else {
+      const k1 = deriv(S, P, t);
+      const s2 = {}; STOCK_NAMES.forEach(s => s2[s] = S[s] + 0.5 * dt * k1[s]);
+      const k2 = deriv(s2, P, t + 0.5 * dt);
+      const s3 = {}; STOCK_NAMES.forEach(s => s3[s] = S[s] + 0.5 * dt * k2[s]);
+      const k3 = deriv(s3, P, t + 0.5 * dt);
+      const s4 = {}; STOCK_NAMES.forEach(s => s4[s] = S[s] + dt * k3[s]);
+      const k4 = deriv(s4, P, t + dt);
+      const ns = {};
+      STOCK_NAMES.forEach(s => ns[s] = S[s] + dt / 6.0 * (k1[s] + 2*k2[s] + 2*k3[s] + k4[s]));
+      S = ns;
+    }
+    t = start + (i + 1) * dt;
+    STOCK_NAMES.forEach(s => { if (S[s] < mins[s]) mins[s] = S[s]; });
+    record(t);
+  }
+  return { times: times, series: series, finalStocks: S, mins: mins };
+}
+
+// Full time series + endpoint stock vector — for the dashboard.
+function simulate(overrides, opts) { return stepAll(overrides, opts); }
+function final_state(overrides, opts) { return stepAll(overrides, opts).finalStocks; }
+
+// Checkpoint matrix — the Stage 5 validation path (numerics unchanged).
+function run(overrides, checkpoints, opts) {
+  const out = stepAll(overrides, opts);
+  const cpset = new Set(checkpoints.map(c => c.toFixed(6)));
+  const captured = {};
+  out.times.forEach((tt, i) => {
+    if (cpset.has(tt.toFixed(6))) {
+      const row = {};
+      REPORT_VARS.forEach(v => row[v] = out.series[v][i]);
+      captured[tt.toFixed(6)] = row;
+    }
+  });
+  return { checkpoints: captured, stock_mins: out.mins };
+}
+
+if (typeof require !== "undefined" && require.main === module) {
+  const fs = require("fs");
+  const scen = JSON.parse(fs.readFileSync(process.argv[2], "utf-8"));
+  const checkpoints = scen.checkpoints || [SIM.start, SIM.stop];
+  const out = { engine: "javascript", report_vars: REPORT_VARS, scenarios: {} };
+  scen.scenarios.forEach(sc => { out.scenarios[sc.name] = run(sc.overrides || {}, checkpoints); });
+  fs.writeFileSync(process.argv[3], JSON.stringify(out, null, 2));
+  console.log("PASS: javascript twin ran " + scen.scenarios.length + " scenario(s).");
+}
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { run, simulate, final_state, REPORT_VARS, STOCK_NAMES, SIM };
+}
+
+/* dashboard configuration */
+var DASH = {"title": "Individual Private Provider - MD115 and Onshore Commission Ban: Impact on Via...", "kicker": "iMORSE", "subtitle": "A 12-quarter system dynamics simulator - locked validation backcast and forward policy view", "headline_var": "enrolled_students", "tiles": [{"var": "enrolled_students", "label": "Intl enrolment", "unit": "students", "decimals": 0}, {"var": "cash_reserves", "label": "Cash reserves", "unit": "AUD", "decimals": 0}, {"var": "agent_confidence", "label": "Agent confidence", "unit": "index", "decimals": 2}, {"var": "perceived_utilisation", "label": "Allocation use", "unit": "of cap", "decimals": 2}], "charts": [{"title": "International enrolment", "vars": ["enrolled_students"], "y_label": "students", "invert_y": false}, {"title": "Cash reserves (viability)", "vars": ["cash_reserves"], "y_label": "AUD", "invert_y": false}, {"title": "Commencements and onshore transfers", "vars": ["commencements", "onshore_transfer_in"], "y_label": "students / quarter", "invert_y": false}, {"title": "Agent confidence and processing speed", "vars": ["agent_confidence", "processing_speed"], "y_label": "index (0-1)", "invert_y": false}, {"title": "Allocation utilisation vs the cap", "vars": ["perceived_utilisation"], "y_label": "utilisation (fraction of NOSC cap)", "invert_y": false}], "controls": [{"param": "nosc_allocation", "label": "NOSC allocation (annual cap)", "min": 600, "max": 2000, "step": 50, "unit": "students/year", "description": "The provider's annual indicative allocation of new overseas commencements. The provider's natural intake is around 850-900 a year, so values below that bind the cap and trigger the MD115 throttle; values above it give headroom. This is the primary 'either side of the cap' lever."}, {"param": "domestic_share", "label": "Domestic share of cohort", "min": 0, "max": 0.9, "step": 0.05, "unit": "fraction", "description": "How much of the total student cohort is domestic. Domestic revenue is a cash cushion that is not exposed to MD115 or the commission ban, so raising it defends viability."}, {"param": "offshore_market_demand", "label": "Offshore market demand", "min": 0.4, "max": 1.6, "step": 0.1, "unit": "index", "description": "Underlying offshore demand for the provider's courses, as an index around the baseline of 1.0. More demand fills the applications pipeline - but if the cap is binding, it pushes utilisation up and the throttle bites harder."}, {"param": "base_marketing_spend", "label": "Recruitment and marketing spend", "min": 200000, "max": 1500000, "step": 100000, "unit": "AUD/quarter", "description": "Quarterly recruitment and marketing budget. It funds agent effort and onshore activity, but is also a cost, so it draws on cash."}, {"param": "intl_fee_per_quarter", "label": "International tuition fee", "min": 5000, "max": 12000, "step": 500, "unit": "AUD/quarter", "description": "International tuition charged per student per quarter (about A$20k-48k a year). Lifts revenue per enrolled student."}, {"param": "base_operating_cost", "label": "Operating cost base", "min": 12000000, "max": 18000000, "step": 200000, "unit": "AUD/quarter", "description": "The provider's quarterly operating cost base before austerity. Lower costs preserve cash and lengthen the runway."}, {"param": "ban_fraction", "label": "Commission ban strength", "min": 0, "max": 1, "step": 0.05, "unit": "fraction", "description": "How much of agent-driven onshore transfer activity the commission ban removes from 31 March 2026. Higher removes more transfer inflow but also suppresses poaching, improving retention."}], "scales": {"domestic_share": "Domestic students as a share of the total cohort. 0 = pure international (no cushion); 0.5 = half domestic; 0.9 = overwhelmingly domestic. Higher = more domestic cash insulated from the two policies.", "offshore_market_demand": "Offshore demand index. 1.0 = calibrated baseline; 0.4 = severe collapse; 1.6 = a strong market. Higher = more applications entering the pipeline.", "ban_fraction": "Share of agent-driven onshore transfers the ban removes. 0 = no effect; 0.85 = 85% removed (baseline); 1 = all removed. Higher = more transfer inflow lost and more churn suppressed.", "agent_confidence": "Agent confidence in the provider, 0-1. 1 = full confidence; 0 = collapsed. Falls fast on a slowdown or refusals, rebuilds slowly. Higher is better.", "processing_speed": "Offshore visa processing speed relative to Priority 1, 0-1. 1.0 = fastest (Priority 1, 1-4 weeks); ~0.38 = Priority 2 (5-8 weeks); ~0.15 = Priority 3 (slow lane). Higher = faster; lower means MD115 is throttling.", "perceived_utilisation": "Share of the NOSC allocation in use (annualised commencements / allocation). Below 0.80 = Priority 1; 0.80-1.15 = Priority 2; above 1.15 = Priority 3. Higher = closer to or over the cap, which slows offshore processing."}, "var_glossary": {"enrolled_students": "International students currently enrolled at the provider.", "cash_reserves": "Cash reserves (AUD) on the international book - the viability bottom line. Can fall below zero at insolvency.", "commencements": "New offshore commencements per quarter - students starting once their visa is granted. Throttled by MD115 processing speed.", "onshore_transfer_in": "New onshore transfer-in commencements per quarter - students moving in from another Australian provider. Driven by agent commissions until the ban.", "agent_confidence": "Agent confidence in the provider, 0-1; falls fast on a slowdown, rebuilds slowly. Higher is better.", "processing_speed": "Offshore processing speed vs Priority 1, 0-1. 1.0 = fastest; lower means MD115 is throttling.", "perceived_utilisation": "Share of the NOSC allocation in use; above 0.80 drops the provider to Priority 2, above 1.15 to Priority 3."}, "backcast_overrides": {}, "forward_anchor": 2, "forward_horizon": 10, "presets": [{"name": "Hold the line (baseline)", "description": "Do nothing: the provider stays near its cap and lets MD115 and the ban run. Enrolment drifts to about 1,657 and cash to about A$25.8M by Q12 - the feared trajectory.", "levers": {}}, {"name": "Stay under the cap", "description": "Manage intake within a larger allocation (1,600/yr) so the throttle releases and processing returns to Priority 1. Enrolment holds near 1,745 with confidence recovering.", "levers": {"nosc_allocation": 1600}}, {"name": "Diversify to domestic (defend viability)", "description": "Lift the domestic share to 0.5 as a cash cushion. Enrolment is unchanged (about 1,657) but cash climbs to about A$79.8M - the survival / break-even ambition, comfortably met.", "levers": {"domestic_share": 0.5}}, {"name": "Chase offshore demand (the fix that fails)", "description": "Push offshore demand to 1.4 while the cap still binds. Utilisation rises, the throttle bites harder (processing speed about 0.60), confidence falls to about 0.61 and enrolment barely moves (about 1,688) - a limits-to-growth fix that fails.", "levers": {"offshore_market_demand": 1.4}}, {"name": "Mid-stress - partial insolvency", "description": "A tighter cap (700/yr), a lower international fee (A$6k/qtr) and a higher cost base (A$17M/qtr). Cash drains through zero to about -A$6.3M and enrolment falls to about 1,009 by Q12 - the runway runs out.", "levers": {"nosc_allocation": 700, "intl_fee_per_quarter": 6000, "base_operating_cost": 17000000}}, {"name": "Cliff edge - insolvency", "description": "The full death spiral: over the cap (700/yr), the lowest fee (A$5k/qtr), the highest cost base (A$18M/qtr) and no domestic cushion. Cash collapses to about -A$39.9M and enrolment to about 840 by Q12 - the model showing its non-linear range, not a gentle decline.", "levers": {"nosc_allocation": 700, "intl_fee_per_quarter": 5000, "base_operating_cost": 18000000, "domestic_share": 0.0}}, {"name": "Recovery push (reach pre-MD115)", "description": "Combine cap headroom (1,600/yr), stronger demand (1.3) and a domestic cushion (0.4). Enrolment recovers to about 2,065 - past the pre-MD115 ~1,800 target - with cash about A$71.8M and full processing speed.", "levers": {"nosc_allocation": 1600, "offshore_market_demand": 1.3, "domestic_share": 0.4}}], "assumptions": [{"title": "Two views, one validated engine.", "body": "The validation view reproduces the locked backcast; the forward view re-anchors to today (about Q2, mid-2026, when the commission ban takes effect) and runs policy. Both use the one engine proven bit-identical to the Python reference."}, {"title": "Where you sit on the cap decides everything.", "body": "The central case is a provider at or near its NOSC allocation, where MD115 bites. Move the allocation lever either side of the cap to see the throttle engage or release - the model does not pre-judge it."}, {"title": "Confidence falls fast and rebuilds slow.", "body": "Agent confidence is asymmetric: a processing slowdown or refusals drain it quickly and it recovers slowly, so a short throttle can leave a durable commencement slump."}, {"title": "Chasing demand into a binding cap can backfire.", "body": "Lifting offshore demand while the cap binds pushes utilisation up, the throttle harder, and confidence down - a fix that fails. Staying under the cap or diversifying is the more reliable lever."}, {"title": "Read shapes, not precise numbers.", "body": "This is an archetypal calibration for scenario discussion, not a forecast for any named provider. Read the trajectories as shapes and recalibrate to a provider's own books before relying on levels."}], "time_units": "quarter", "footer": "Self-contained \u00b7 no internet or software required beyond a browser \u00b7 engine verified bit-identical to the validated reference", "_dev": "staged", "base": {"nosc_allocation": 850, "domestic_share": 0.2, "offshore_market_demand": 1.0, "base_marketing_spend": 600000, "intl_fee_per_quarter": 8000, "base_operating_cost": 15200000, "ban_fraction": 0.85}};
+/* compute: two views, one engine */
+var DT = SIM.dt, T0 = (DASH.forward_anchor!==undefined && DASH.forward_anchor!==null) ? DASH.forward_anchor : SIM.stop;
+function merge(a,b){var o={};for(var k in a)o[k]=a[k];if(b)for(var k in b)o[k]=b[k];return o;}
+function computeBackcast(p){ return simulate(merge(DASH.backcast_overrides, p||{})); }
+function anchorState(){
+  var run = simulate(DASH.backcast_overrides);
+  var bi = 0, bd = Infinity;
+  for(var i=0;i<run.times.length;i++){ var d=Math.abs(run.times[i]-T0); if(d<bd){bd=d;bi=i;} }
+  var y0 = {};
+  STOCK_NAMES.forEach(function(s){ y0[s] = run.series[s][bi]; });
+  return y0;
+}
+function computeForward(p){
+  return simulate(p||{}, { initialStocks:anchorState(), start:T0, stop:T0+DASH.forward_horizon });
+}
+/* state */
+var state={ mode:"validation", active:"A", A:{}, B:{}, selectedPreset:{} };
+function presetMatches(which,pi){var p=DASH.presets&&DASH.presets[pi];if(!p)return false;var lv=p.levers||{},t=state[which],B=DASH.base||{},cs=DASH.controls||[];for(var i=0;i<cs.length;i++){var c=cs[i],k=c.param,v=(lv[k]!==undefined)?lv[k]:B[k];if(v==null)v=0;if(v<c.min)v=c.min;if(v>c.max)v=c.max;var cur=(t[k]==null?(B[k]==null?0:B[k]):t[k]);if(Math.abs(cur-v)>1e-6*Math.max(1,Math.abs(v)))return false;}return true;}
+function stylePresetBtns(){var sel=state.selectedPreset[state.active];Array.prototype.forEach.call(document.querySelectorAll(".presetbtn"),function(b){var pi=+b.getAttribute("data-pi");if(pi===sel&&presetMatches(state.active,pi)){b.style.background=COL[state.active];b.style.color="#fff";b.style.borderColor=COL[state.active];}else if(pi===sel){b.style.background="#d7dbe3";b.style.color="#333";b.style.borderColor="#b9bfca";}else{b.style.background="#fff";b.style.color="";b.style.borderColor=MUTE;}});}
+(DASH.controls||[]).forEach(function(c){ state.A[c.param]=DASH.base[c.param]; state.B[c.param]=DASH.base[c.param]; });
+var COL={A:"#2E5E8C",B:"#B5651D",CAL:"#2E5E8C"}, INK="#1E2A33", MUTE="#5B6470", HAIR="#E4E0D8";
+var VARCOL=["#2E5E8C","#B5651D","#55803E","#7A4A8C"];
+var CHARTMETA=[];
+var VARGLOSS=DASH.var_glossary||{};
+var CUNIT={}; (DASH.controls||[]).forEach(function(c){ CUNIT[c.param]=c.unit||""; });
+function glossVars(){
+  if(!Object.keys(VARGLOSS).length) return "";
+  var seen={}, order=[];
+  (DASH.charts||[]).forEach(function(ch){ ch.vars.forEach(function(v){ if(!seen[v]){seen[v]=1; order.push(v);} }); });
+  (DASH.tiles||[]).forEach(function(t){ if(!seen[t.var]){seen[t.var]=1; order.push(t.var);} });
+  return '<div class="gloss"><h3>What the chart variables mean</h3>'+order.map(function(v){
+    return '<div class="gi"><b>'+v+'</b>'+(VARGLOSS[v]||"")+((DASH.scales||{})[v]?' <span class="gr">Scale: '+(DASH.scales||{})[v]+'</span>':'')+'</div>'; }).join("")+'</div>';
+}
+function el(id){return document.getElementById(id);}
+function fmt(v,d){ if(!isFinite(v))return "-"; d=(d===undefined?1:d); return v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+/* chart (SVG, no libraries) */
+function chartSVG(xs, sers, yLabel, invert, ci){
+  var W=560,H=240,padL=54,padR=14,padT=12,padB=34;
+  var ymin=Infinity,ymax=-Infinity;
+  sers.forEach(function(s){ s.ys.forEach(function(y){ if(isFinite(y)){ if(y<ymin)ymin=y; if(y>ymax)ymax=y; } }); });
+  if(ymin===ymax){ymax=ymin+1;} var pad=(ymax-ymin)*0.08; ymin-=pad; ymax+=pad;
+  var xmin=xs[0], xmax=xs[xs.length-1]; if(xmax===xmin)xmax=xmin+1;
+  function X(x){return padL+(x-xmin)/(xmax-xmin)*(W-padL-padR);}
+  function Y(y){var yy=invert?(ymin+ymax-y):y; return padT+(ymax-yy)/(ymax-ymin)*(H-padT-padB);}
+  var grid="",ticks=4;
+  for(var i=0;i<=ticks;i++){ var yv=ymin+(ymax-ymin)*i/ticks; var py=Y(yv);
+    grid+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+py+'" y2="'+py+'" stroke="'+HAIR+'"/>'+
+          '<text x="'+(padL-6)+'" y="'+(py+3)+'" text-anchor="end" font-size="10" fill="'+MUTE+'">'+fmt(yv, (ymax-ymin)<5?2:0)+'</text>'; }
+  var xticks=5, xspan=(xmax-xmin), xdecimals=(xspan<5?1:0);
+  for(var i=0;i<=xticks;i++){ var xv=xmin+xspan*i/xticks; var px=X(xv);
+    grid+='<line x1="'+px+'" x2="'+px+'" y1="'+(H-padB)+'" y2="'+(H-padB+4)+'" stroke="'+MUTE+'"/>'+
+          '<text x="'+px+'" y="'+(H-padB+15)+'" text-anchor="middle" font-size="10" fill="'+MUTE+'">'+fmt(xv,xdecimals)+'</text>'; }
+  var lines="";
+  sers.forEach(function(s){
+    var d=""; for(var i=0;i<xs.length;i++){ d+=(i?"L":"M")+X(xs[i]).toFixed(1)+" "+Y(s.ys[i]).toFixed(1); }
+    lines+='<path d="'+d+'" fill="none" stroke="'+s.color+'" stroke-width="'+(s.dashed?2.0:2.6)+'"'+(s.dashed?' stroke-dasharray="5 3"':'')+'/>';
+  });
+  CHARTMETA[ci]={xs:xs,sers:sers,xmin:xmin,xmax:xmax,ymin:ymin,ymax:ymax,W:W,H:H,padL:padL,padR:padR,padT:padT,padB:padB};
+  var anchorMark=""; if(state.mode!=="forward"&&T0>xmin&&T0<xmax){var ax=X(T0).toFixed(1); anchorMark='<line x1="'+ax+'" x2="'+ax+'" y1="'+padT+'" y2="'+(H-padB)+'" stroke="'+INK+'" stroke-dasharray="4 3"/>';}
+  var cross='<line class="cx" x1="0" x2="0" y1="'+padT+'" y2="'+(H-padB)+'" stroke="'+MUTE+'" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>';
+  var xlab='<text x="'+((padL+W-padR)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="10" fill="'+MUTE+'">'+DASH.time_units+(state.mode==="forward"?" from today":"")+'</text>';
+  var ylab='<text transform="translate(13,'+((padT+H-padB)/2)+') rotate(-90)" text-anchor="middle" font-size="10" fill="'+MUTE+'">'+yLabel+'</text>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block" class="chsvg" data-ci="'+ci+'">'+grid+lines+anchorMark+cross+xlab+ylab+'</svg>';
+}
+
+/* render */
+function activeRun(which){ return state.mode==="forward"?computeForward(state[which]):computeBackcast({}); }
+function xAxis(out){ return out.times.map(function(t){ return state.mode==="forward"?(t-T0):t; }); }
+
+function renderModebar(){
+  el("modebar").innerHTML=[["validation","Validation - backcast (reproduces history)"],
+                           ["forward","Forward - policy (today → +"+DASH.forward_horizon+" "+DASH.time_units+")"]]
+    .map(function(m){ var on=state.mode===m[0];
+      return '<button class="modebtn" data-m="'+m[0]+'" style="'+(on?'background:'+INK+';color:#fff;border-color:'+INK:'')+'">'+m[1]+'</button>'; }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll('.modebtn'),function(b){
+    b.onclick=function(){ state.mode=b.getAttribute('data-m'); renderAll(); }; });
+}
+function renderTiles(){
+  var run=state.mode==="forward"?computeForward(state.A):computeBackcast({});
+  el("tiles").innerHTML=(DASH.tiles||[]).map(function(t){
+    var arr=run.series[t.var]; var v=arr?arr[arr.length-1]:NaN;
+    return '<div class="tile"><div class="tl">'+t.label+(t.unit?' ('+t.unit+')':'')+'</div><div class="tv">'+fmt(v,t.decimals)+'</div></div>'; }).join("");
+}
+function renderConsole(){
+  if(state.mode!=="forward"){ el("console").innerHTML='<div class="locked"><b>Validation view.</b> This run is locked: it reproduces the subject\u2019s known history to earn trust before any forecast. Switch to <b>Forward</b> to drive future policy.</div>'+glossVars(); return; }
+  var h='<div class="abtoggle">'+["A","B"].map(function(w){ var on=state.active===w;
+      return '<button class="abbtn" data-w="'+w+'" style="'+(on?'background:'+COL[w]+';color:#fff;border-color:'+COL[w]:'')+'">Scenario '+w+'</button>'; }).join("")+
+      '<button class="abbtn" id="resetbtn" style="margin-left:auto;color:'+MUTE+'" title="Return every lever in scenario '+state.active+' to its baseline value">Reset '+state.active+' to baseline</button></div>';
+  if(DASH.presets&&DASH.presets.length){
+    h+='<div style="margin:12px 0 4px"><div style="font-weight:600;margin-bottom:5px">Preset scenarios</div>'+
+      DASH.presets.map(function(p,pi){ return '<button class="presetbtn" data-pi="'+pi+'" title="'+String(p.description||"").replace(/"/g,"&quot;")+'" style="margin:0 6px 6px 0;padding:5px 10px;border:1px solid '+MUTE+';border-radius:6px;background:#fff;cursor:pointer;font:inherit">'+p.name+'</button>'; }).join("")+
+      '<div style="font-size:11px;color:'+MUTE+'">One click sets the levers in Scenario '+state.active+'; the button stays dark while those values hold, and turns grey if you change any.</div></div>';
+  }
+  (DASH.controls||[]).forEach(function(c){ var val=state[state.active][c.param];
+    h+='<div class="srow"><div class="slab"><span>'+c.label+'</span><span class="sval" data-k="'+c.param+'" style="color:'+COL[state.active]+'">'+(+val)+(c.unit?' '+c.unit:'')+'</span></div>'+
+       '<input type="range" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+val+'" data-k="'+c.param+'"></div>'; });
+  h+='<div class="gloss"><h3>What the levers mean</h3>'+(DASH.controls||[]).map(function(c){
+    var g=c.description||""; var base=DASH.base[c.param]; var sc=(DASH.scales||{})[c.param];
+    return '<div class="gi"><b>'+c.label+'</b>'+g+' <span class="gr">Range '+c.min+'-'+c.max+(c.unit?' '+c.unit:'')+' \u00b7 baseline '+base+'.</span>'+(sc?' <span class="gr">Scale: '+sc+'</span>':'')+'</div>'; }).join("")+'</div>';
+  h+=glossVars();
+  el("console").innerHTML=h;
+  Array.prototype.forEach.call(document.querySelectorAll('.abbtn'),function(b){ b.onclick=function(){ state.active=b.getAttribute('data-w'); renderAll(); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('.presetbtn'),function(b){ b.onclick=function(){
+    var p=DASH.presets[+b.getAttribute('data-pi')]||{}, t=state[state.active], lv=p.levers||{};
+    for(var bk in DASH.base){ t[bk]=DASH.base[bk]; }
+    (DASH.controls||[]).forEach(function(c){ if(lv[c.param]!==undefined){
+      var v=lv[c.param]; if(v<c.min)v=c.min; if(v>c.max)v=c.max; t[c.param]=v; } });
+    state.selectedPreset[state.active]=+b.getAttribute('data-pi');
+    renderAll(); }; });
+  Array.prototype.forEach.call(el("console").querySelectorAll('input[type=range]'),function(inp){
+    inp.oninput=function(){ var k=inp.getAttribute('data-k'), v=parseFloat(inp.value);
+      state[state.active][k]=v;
+      var sv=el("console").querySelector('.sval[data-k="'+k+'"]');
+      if(sv) sv.textContent=v+(CUNIT[k]?' '+CUNIT[k]:'');
+      stylePresetBtns(); renderTiles(); renderCharts(); }; });
+  var rb=el("resetbtn");
+  if(rb) rb.onclick=function(){ var t=state[state.active];
+    for(var k in DASH.base) t[k]=DASH.base[k]; state.selectedPreset[state.active]=undefined; renderAll(); };
+  stylePresetBtns();
+}
+function renderCharts(){
+  var html="";
+  CHARTMETA=[];
+  function key(ch){ return ch.vars.map(function(v,vi){
+      return '<span class="ki"><span class="ksw" style="background:'+VARCOL[vi%VARCOL.length]+'"></span>'+v+'</span>'; }).join(""); }
+  if(state.mode==="forward"){
+    var A=computeForward(state.A), B=computeForward(state.B), xs=xAxis(A);
+    (DASH.charts||[]).forEach(function(ch,ci){
+      var sers=[]; ch.vars.forEach(function(v,vi){ var c=VARCOL[vi%VARCOL.length];
+        sers.push({ys:A.series[v],color:c,dashed:false,label:v+" - A"});
+        sers.push({ys:B.series[v],color:c,dashed:true,label:v+" - B"}); });
+      html+='<div class="card"><div class="ctitle">'+ch.title+'</div>'+chartSVG(xs,sers,ch.y_label,ch.invert_y,ci)+
+            '<div class="legend">'+key(ch)+'<span class="ki" style="color:'+MUTE+'">solid = Scenario A &nbsp;\u00b7&nbsp; dashed = Scenario B</span></div></div>';
+    });
+  } else {
+    var C=computeBackcast({}), xs=xAxis(C);
+    (DASH.charts||[]).forEach(function(ch,ci){
+      var sers=ch.vars.map(function(v,vi){ return {ys:C.series[v],color:VARCOL[vi%VARCOL.length],dashed:false,label:v}; });
+      html+='<div class="card"><div class="ctitle">'+ch.title+'</div>'+chartSVG(xs,sers,ch.y_label,ch.invert_y,ci)+
+            '<div class="legend">'+key(ch)+'<span class="ki" style="color:'+MUTE+'">Calibration backcast - reproduces history; dashed vertical line = calibration anchor</span></div></div>';
+    });
+  }
+  el("charts").innerHTML=html;
+  attachHover();
+}
+function attachHover(){
+  var tip=el("chartTip");
+  if(!tip){ tip=document.createElement("div"); tip.id="chartTip"; document.body.appendChild(tip); }
+  Array.prototype.forEach.call(document.querySelectorAll("svg.chsvg"),function(svg){
+    var ci=parseInt(svg.getAttribute("data-ci"),10), m=CHARTMETA[ci]; if(!m)return;
+    var cx=svg.querySelector(".cx");
+    svg.addEventListener("mousemove",function(evt){
+      var r=svg.getBoundingClientRect(), px=(evt.clientX-r.left)*m.W/r.width;
+      if(px<m.padL-2||px>m.W-m.padR+2){ cx.style.display="none"; tip.style.display="none"; return; }
+      var xv=m.xmin+(px-m.padL)/(m.W-m.padL-m.padR)*(m.xmax-m.xmin);
+      var bi=0,bd=Infinity; for(var i=0;i<m.xs.length;i++){ var d=Math.abs(m.xs[i]-xv); if(d<bd){bd=d;bi=i;} }
+      var sx=m.padL+(m.xs[bi]-m.xmin)/(m.xmax-m.xmin)*(m.W-m.padL-m.padR);
+      cx.setAttribute("x1",sx); cx.setAttribute("x2",sx); cx.style.display="";
+      var dec=(m.ymax-m.ymin)<5?3:1;
+      var h='<div class="tt">'+DASH.time_units+' '+fmt(m.xs[bi],(m.xmax-m.xmin)<5?2:1)+(state.mode==="forward"?" from today":"")+'</div>';
+      m.sers.forEach(function(s){ h+='<div class="tr"><span class="sw" style="background:'+s.color+(s.dashed?';opacity:.55':'')+'"></span>'+(s.label||"")+'<span class="tvv">'+fmt(s.ys[bi],dec)+'</span></div>'; });
+      tip.innerHTML=h; tip.style.display="block";
+      var pad=14, tw=tip.offsetWidth||190, lx=evt.clientX+pad;
+      if(lx+tw>window.innerWidth-8) lx=evt.clientX-tw-pad;
+      tip.style.left=lx+"px"; tip.style.top=(evt.clientY+pad)+"px";
+    });
+    svg.addEventListener("mouseleave",function(){ cx.style.display="none"; tip.style.display="none"; });
+  });
+}
+function renderNote(){
+  el("note").innerHTML = state.mode==="forward"
+    ? "Forward re-anchors to today by seeding the run from the calibration\u2019s endpoint state, then runs future policy. Edit the active scenario and compare A against B."
+    : "Two views, one validated engine. Validation reproduces the subject\u2019s known history; switch to Forward to drive future policy.";
+}
+function renderAssume(){
+  el("assume").innerHTML='<h2>What this model assumes - and what it doesn\u2019t</h2>'+
+    (DASH.assumptions||[]).map(function(a){ return '<p><b>'+a.title+'</b> '+a.body+'</p>'; }).join("");
+}
+function renderAll(){ renderModebar(); renderNote(); renderTiles(); renderConsole(); renderCharts(); }
+el("kicker").textContent=DASH.kicker; el("title").textContent=DASH.title; el("sub").textContent=DASH.subtitle;
+el("foot").textContent=DASH.footer; renderAssume(); renderAll();
+</script>
+</body></html>

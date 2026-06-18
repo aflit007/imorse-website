@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foresight &amp; simulation - iMORSE</title>
+<meta name="description" content="System-dynamics foresight for boards: a validated, interactive model that shows how a policy, shock or strategic choice plays out over time. Includes a live demonstrator and reports, delivered by Professor Andrew Flitman.">
+<link rel="icon" href="assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Caladea:ital,wght@0,400;0,700;1,400;1,700&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site" data-screen-label="Foresight - Header">
+  <div class="wrap bar">
+    <a href="index.html" class="brand" aria-label="iMORSE home"><img src="assets/logo-primary.png" alt="iMORSE"></a>
+    <button class="mob-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="var n=document.getElementById('primary-nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="square"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="primary-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="foresight.html" class="active">Foresight</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero" data-screen-label="Foresight - Page hero">
+  <div class="wrap">
+    <div class="kicker">Foresight &amp; simulation</div>
+    <h1>Model the decision before you make it.</h1>
+    <p class="lede">Analytics tells a board what is happening. Foresight tells it what happens next - how a policy, a shock or a strategic choice moves an institution over the years that follow, and which lever changes the outcome.</p>
+  </div>
+</section>
+
+<section class="section" data-screen-label="Foresight - What it delivers">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <span class="rule-blue"></span>
+        <h2>What iMORSE delivers here.</h2>
+        <p class="lead">A validated model of the institution as a living system - turned into a simulator a board can actually drive.</p>
+        <p>Boards make decisions whose consequences arrive slowly. A funding change, a regulatory throttle, a fee adjustment, an enrolment strategy - the effect is rarely immediate and rarely linear. It builds, it feeds back on itself, and by the time it shows in the accounts the moment to act has passed.</p>
+        <p>System dynamics models that movement directly. The institution is represented as a structure of stocks and feedback loops, calibrated to evidence and proven against a known history. The result is not a forecast. It is foresight: the shape of what follows, where the turning points sit, and which single lever bends the trajectory.</p>
+      </div>
+      <ul class="bullets">
+        <li><b>01</b><span><strong>Answers a question a spreadsheet cannot.</strong> Feedback and accumulation produce behaviour - plateaus, overshoots, collapses - that linear projections miss entirely.</span></li>
+        <li><b>02</b><span><strong>A simulator, not a slide.</strong> Move a lever, watch the trajectory bend, compare two strategies side by side. Live, in the browser, nothing to install.</span></li>
+        <li><b>03</b><span><strong>Validated before it is trusted.</strong> Every model must reproduce a known history before it is allowed to look forward. The method is disclosed; the assumptions are named.</span></li>
+        <li><b>04</b><span><strong>Read for the board, not the analyst.</strong> The deliverable is a drivable model and a short narrative - shapes and turning points a Chair can follow in ten minutes.</span></li>
+        <li><b>05</b><span><strong>Delivered directly by iMORSE.</strong> The modelling is done by Professor Flitman. There is no team learning the method on your problem.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" data-screen-label="Foresight - How it works">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="rule-blue"></span>
+      <h2>How an engagement runs.</h2>
+      <p>Five disciplined stages, from a loosely-stated worry to a model a board can put its weight on.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">01</div>
+        <div class="sh">Frame</div>
+        <p>Name the dynamic problem and the historical behaviour the model must reproduce.</p>
+      </div>
+      <div class="step">
+        <div class="sn">02</div>
+        <div class="sh">Map</div>
+        <p>Draw the causal-loop structure - the feedback that actually drives the behaviour.</p>
+      </div>
+      <div class="step">
+        <div class="sn">03</div>
+        <div class="sh">Build</div>
+        <p>Convert it to a stock-and-flow model with stated equations, units and initial values.</p>
+      </div>
+      <div class="step">
+        <div class="sn">04</div>
+        <div class="sh">Validate</div>
+        <p>Calibrate to evidence and prove the model reproduces a known history before it looks forward.</p>
+      </div>
+      <div class="step">
+        <div class="sn">05</div>
+        <div class="sh">Deliver</div>
+        <p>A drivable simulator and a board narrative: shapes, turning points, and the lever that matters.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" data-screen-label="Foresight - Live demonstrator">
+  <div class="wrap">
+    <span class="rule-red"></span>
+    <h2>A working demonstrator you can drive.</h2>
+    <p class="demo-intro">This is a complete, validated model - live in your browser, nothing to install. It runs a representative private Australian higher-education provider through twelve quarters while two real policies act together: Ministerial Direction 115, the visa-processing throttle tied to a provider's allocation, and the onshore agent-commission ban. Move the levers. Compare two scenarios. Watch viability hold or fail.</p>
+
+    <div class="demo-meta">
+      <div class="kicker" style="margin:0">Individual provider · MD115 &amp; onshore commission ban</div>
+      <div class="demo-actions">
+        <a href="demonstrators/foresight-demonstrator.html" target="_blank" rel="noopener">Open in full screen &#8599;</a>
+      </div>
+    </div>
+
+    <iframe class="demo-frame" src="demonstrators/foresight-demonstrator.html" title="iMORSE system-dynamics demonstrator - individual provider, MD115 and onshore commission ban" loading="lazy"></iframe>
+
+    <div class="demo-note">
+      <b>How to read it.</b> The numbers are archetypal - a provider of about 1,800 international students - so the levels are illustrative while the policy mechanics are firm. Read shapes and turning points, not precise levels. A forward run is a scenario, not a forecast. For a specific institution, the model is recalibrated to its own enrolment and financial records. This demonstrator is deliberately generic: models built for a client are calibrated privately and are never published.
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" data-screen-label="Foresight - Reports">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="rule-blue"></span>
+      <h2>The reports behind the model.</h2>
+      <p>Every demonstrator ships with a family of plain-language documents. Four are published here. The full suite - causal-loop structure, stock-and-flow formulation and the complete model specification - is available on request.</p>
+    </div>
+    <div class="report-grid">
+      <a class="report-card" href="demonstrators/reports/Foresight_Demonstrator_One-Pager.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · One page</div>
+        <div class="rt">One-Pager</div>
+        <p class="rd">What it is, the levers you can move, and the charts it reports. The fastest way in.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/Foresight_Demonstrator_Interpretation-Brief.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Brief</div>
+        <div class="rt">Interpretation Brief</div>
+        <p class="rd">How to read each chart, and what the behaviour means for a provider's viability.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/Foresight_Demonstrator_Dynamic-Walkthrough.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Walkthrough</div>
+        <div class="rt">Dynamic Walkthrough</div>
+        <p class="rd">A guided tour of the preset strategies, turning point by turning point.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/Foresight_Demonstrator_Narrative-Report.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Full report</div>
+        <div class="rt">Narrative Report</div>
+        <p class="rd">The complete written analysis: structure, evidence, findings and limits.</p>
+      </a>
+    </div>
+    <div style="margin-top:32px">
+      <a class="btn btn-ghost" href="contact.html">Request the full suite</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" data-screen-label="Foresight - Closing CTA">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <span class="rule-red"></span>
+        <h2>If a decision in front of your board plays out over years, model it.</h2>
+        <p>A short call will confirm whether system-dynamics foresight fits the question - and what it would take to calibrate a model to your institution.</p>
+      </div>
+      <div class="cta-right">
+        <a class="btn btn-primary-on-blue" href="contact.html">Start a conversation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site" data-screen-label="Foresight - Footer">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <img class="logo" src="assets/logo-primary.png" alt="iMORSE">
+        <div class="tag">Decoding Higher Education</div>
+        <address>
+          Flitman Research Pty Ltd<br>
+          trading as iMORSE<br>
+          ACN 113 023 733<br>
+          Melbourne &amp; Torquay, Victoria, Australia
+        </address>
+      </div>
+      <div>
+        <h4>Practice</h4>
+        <a href="about.html">About iMORSE</a>
+        <a href="services.html">Services</a>
+        <a href="services.html#governance">Governance</a>
+        <a href="foresight.html">Foresight &amp; simulation</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="contact.html">Enquiry form</a>
+        <a href="mailto:aflitman@imorse.com.au">aflitman@imorse.com.au</a>
+        <a href="https://www.linkedin.com/" rel="noopener">LinkedIn</a>
+      </div>
+      <div>
+        <h4>Regions</h4>
+        <a href="about.html#reach">Australia</a>
+        <a href="about.html#reach">Asia</a>
+        <a href="about.html#reach">Middle East</a>
+        <a href="about.html#reach">Europe</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Flitman Research Pty Ltd trading as iMORSE. All rights reserved.</span>
+      <span>Engagements are confidential.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
