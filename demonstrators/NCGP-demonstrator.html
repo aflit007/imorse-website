@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<!-- Australian NCGP Reform - Policy Explorer - dual-mode SD dashboard. Author: Andrew Flitman (iMORSE).
+     Self-contained: validated engine (generated from model_spec), derived series,
+     and presentation layer embedded; no external dependencies. -->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Australian NCGP Reform - Policy Explorer</title>
+<style>
+:root{--ink:#1E2A33;--mute:#5B6470;--paper:#F6F4EF;--card:#fff;--hair:#E4E0D8;--A:#2E5E8C;--B:#B5651D;}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+ padding:22px 20px;line-height:1.5;max-width:1180px;margin:0 auto}
+.kicker{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+h1{font-size:23px;margin:4px 0 2px} .sub{color:var(--mute);font-size:14px;margin-bottom:14px}
+.modebar{display:flex;gap:8px;margin:10px 0 14px;flex-wrap:wrap}
+.modebtn{font-size:13px;padding:7px 13px;border-radius:7px;cursor:pointer;border:1px solid var(--hair);background:#fff;color:var(--ink)}
+.tiles{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.tile{background:var(--card);border:1px solid var(--hair);border-radius:10px;padding:10px 14px;min-width:130px}
+.tile .tl{font-size:11px;color:var(--mute)} .tile .tv{font-size:22px;font-weight:600} .tile .tw{font-size:10px;color:var(--mute);margin-top:3px}
+.note{background:#EEEAE1;border:1px solid var(--hair);border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:14px}
+.grid{display:flex;gap:16px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:14px;flex:1 1 320px}
+.console{flex:1 1 280px}
+.srow{margin:10px 0}
+.slab{display:flex;justify-content:space-between;font-size:12.5px}
+.sval{font-family:ui-monospace,Menlo,monospace}
+input[type=range]{width:100%}
+.sunit{font-size:11px;color:var(--mute)}
+.abtoggle{display:flex;gap:6px;margin:4px 0 10px}
+.abbtn{font-size:12px;padding:4px 12px;border-radius:6px;border:1px solid var(--hair);background:#fff;cursor:pointer}
+.charts{flex:2 1 520px;display:flex;flex-direction:column;gap:14px}
+.ctitle{font-size:14px;font-weight:600;margin-bottom:2px}
+.legend{font-size:12px;color:var(--mute);margin-top:4px}
+.assume{margin-top:20px} .assume h2{font-size:16px} .assume p{font-size:13px;margin:0 0 8px}
+.foot{margin-top:18px;padding-top:10px;border-top:1px solid var(--hair);font-size:11.5px;color:var(--mute)}
+.locked{font-size:13px;color:var(--mute)}
+#chartTip{position:fixed;display:none;z-index:50;background:#fff;border:1px solid var(--hair);border-radius:6px;box-shadow:0 2px 10px rgba(30,42,51,.18);padding:8px 10px;font-size:12px;color:var(--ink);pointer-events:none;min-width:180px}
+#chartTip .tt{font-weight:600;margin-bottom:4px;color:var(--mute)}
+#chartTip .tr{display:flex;align-items:center;gap:6px;margin:2px 0;white-space:nowrap}
+#chartTip .sw{width:10px;height:10px;border-radius:2px;display:inline-block;flex:none}
+#chartTip .tvv{margin-left:auto;font-weight:600;padding-left:10px}
+.gloss{margin-top:14px;border-top:1px solid var(--hair);padding-top:10px}
+.gloss h3{font-size:11px;margin:0 0 8px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.gloss .gi{margin:0 0 9px;font-size:12px;line-height:1.45;color:var(--ink)}
+.gloss .gi b{display:block}
+.gloss .gr{color:var(--mute)}
+.legend .ki{display:inline-flex;align-items:center;gap:5px;margin-right:12px}
+.legend .ksw{width:14px;height:3px;display:inline-block;border-radius:1px}
+</style></head>
+<body>
+<div class="kicker" id="kicker"></div>
+<h1 id="title"></h1>
+<div class="sub" id="sub"></div>
+<div class="modebar" id="modebar"></div>
+<div class="tiles" id="tiles"></div>
+<div class="note" id="note"></div>
+<div class="grid">
+  <div class="card console" id="console"></div>
+  <div class="charts" id="charts"></div>
+</div>
+<div class="assume" id="assume"></div>
+<div class="foot" id="foot"></div>
+
+<script>
+/* VALIDATED ENGINE (generated from model_spec; do not edit) */
+// AUTO-GENERATED from model_spec by build_js_engine.py. Do not edit by hand;
+// regenerate from the spec. Bit-identical to the Python reference (sd_engine.py).
+"use strict";
+function MAX(){ return Math.max.apply(null, arguments); }
+function MIN(){ return Math.min.apply(null, arguments); }
+function CLIP(x, lo, hi){ return x < lo ? lo : (x > hi ? hi : x); }
+function EXP(x){ return Math.exp(x); }
+function LOG(x){ return Math.log(x); }
+function LN(x){ return Math.log(x); }
+function ABS(x){ return Math.abs(x); }
+function SQRT(x){ return Math.sqrt(x); }
+function POW(a, b){ return Math.pow(a, b); }
+
+const SIM = {"start": 2010, "stop": 2035, "dt": 0.25, "method": "rk4", "time_units": "year"};
+const STOCK_NAMES = ["PhD_pipeline", "ECR_researchers", "MCR_researchers", "SCR_researchers", "Active_projects", "Indigenous_researchers", "Track_record", "Knowledge_impact", "Avg_project_cost", "Collaboration_intensity"];
+const AUX_ORDER = ["hist_phase", "reform_phase", "fellowship_hist", "fellowship_share_eff", "NCGP_budget_eff", "indig_share_eff", "schemes_eff", "annual_project_cost", "Administrative_burden", "Effective_research_time", "effective_researchers", "Available_researcher_capacity", "Mentoring_capacity", "Mid_career_precarity", "Attrition_pressure", "Funding_concentration", "dispersal_quality", "Project_funding_pool", "funding_slack_projects", "Peer_review_turnaround", "throughput_factor", "quality_factor", "total_researchers", "ecr_share", "mcr_share", "scr_share", "economic_return"];
+const REPORT_VARS = ["PhD_pipeline", "ECR_researchers", "MCR_researchers", "SCR_researchers", "Active_projects", "Indigenous_researchers", "Track_record", "Knowledge_impact", "Avg_project_cost", "Collaboration_intensity", "hist_phase", "reform_phase", "fellowship_hist", "fellowship_share_eff", "NCGP_budget_eff", "indig_share_eff", "schemes_eff", "annual_project_cost", "Administrative_burden", "Effective_research_time", "effective_researchers", "Available_researcher_capacity", "Mentoring_capacity", "Mid_career_precarity", "Attrition_pressure", "Funding_concentration", "dispersal_quality", "Project_funding_pool", "funding_slack_projects", "Peer_review_turnaround", "throughput_factor", "quality_factor", "total_researchers", "ecr_share", "mcr_share", "scr_share", "economic_return"];
+const BASE_PARAMS = {"hist_start": 2010.0, "hist_end": 2024.0, "reform_year": 2027.0, "reform_ramp": 3.0, "fellowship_2010": 0.24, "fellowship_2024": 0.46, "fellowship_reform_target": 0.2, "ncgp_budget_2010": 810000000.0, "ncgp_budget_2024": 700000000.0, "indig_share_base": 0.01, "indig_share_reform_target": 0.05, "schemes_base": 15.0, "schemes_reform_target": 7.0, "fellowship_removal": 0.0, "indigenous_boost": 0.0, "scheme_simplification": 0.0, "initiate_boost": 0.0, "initiate_ecr_intake": 300.0, "initiate_retention_effect": 0.35, "lead_mentor_boost": 0.0, "lead_mentor_capacity": 100.0, "lead_mentor_senior_retention": 0.15, "lead_mentor_hdr": 100.0, "phd_per_mentoring": 0.12, "hdr_per_project": 0.08, "external_phd_supply": 1500.0, "phd_duration": 4.0, "phd_to_ecr_fraction": 0.22, "ecr_duration": 5.0, "mcr_duration": 10.0, "base_attrition_fraction": 0.025, "retirement_fraction": 0.05, "avg_project_duration": 3.5, "grant_adjust_time": 2.0, "indig_from_funding": 0.1, "ecr_salary": 127000.0, "indig_mentoring_gain": 0.02, "indig_capacity_ceiling": 3000.0, "indig_attrition": 0.03, "track_gain_per_impact": 0.0005, "track_decay": 0.05, "impact_per_project": 0.0024, "impact_decay": 0.1, "roi_per_impact": 3.32, "base_cost_inflation": 0.025, "concentration_cost_sensitivity": 0.005, "collab_gain": 0.075, "impact_ref": 100.0, "partner_pool": 11000.0, "partner_ref": 11000.0, "collab_decay": 0.05, "cocontribution_rate": 0.15, "admin_per_scheme": 0.02, "admin_per_project": 3e-05, "research_time_loss_per_burden": 0.1, "ecr_capacity_weight": 0.7, "researchers_per_project": 2.5, "mentor_per_senior": 0.6, "mentor_per_mcr": 0.3, "precarity_base": 0.2, "precarity_fellowship_sens": 0.4, "fellowship_ref": 0.35, "precarity_opportunity_sens": 0.1, "projects_ref": 5000.0, "precarity_attrition_sens": 0.5, "pull_sens": 0.2, "external_labour_pull": 1.0, "congestion_sens": 0.1, "mcr_congestion_ref": 6100.0, "concentration_base": 0.55, "concentration_track_sens": 0.03, "track_ref": 1.0, "concentration_dispersal_sens": 0.03, "dispersal_output_elasticity": 0.3, "reserve_share": 0.04, "turnaround_base": 1.0, "turnaround_load_sens": 0.3, "review_capacity": 5000.0, "turnaround_sens": 0.05, "track_quality_gain": 0.1};
+const STOCK_DEFS = {"PhD_pipeline": {"inflows": ["phd_intake"], "outflows": ["phd_graduation"]}, "ECR_researchers": {"inflows": ["ecr_recruit", "initiate_intake"], "outflows": ["ecr_to_mcr", "ecr_exit"]}, "MCR_researchers": {"inflows": ["ecr_to_mcr"], "outflows": ["mcr_to_scr", "mcr_exit"]}, "SCR_researchers": {"inflows": ["mcr_to_scr"], "outflows": ["scr_exit"]}, "Active_projects": {"inflows": ["new_grants"], "outflows": ["project_completion"]}, "Indigenous_researchers": {"inflows": ["indig_build"], "outflows": ["indig_exit"]}, "Track_record": {"inflows": ["track_gain"], "outflows": ["track_decay_flow"]}, "Knowledge_impact": {"inflows": ["production"], "outflows": ["impact_decay_flow"]}, "Avg_project_cost": {"inflows": ["cost_escalation"], "outflows": []}, "Collaboration_intensity": {"inflows": ["collab_growth"], "outflows": ["collab_decay_flow"]}};
+
+function initials(P) {
+  const hist_start = P["hist_start"];
+  const hist_end = P["hist_end"];
+  const reform_year = P["reform_year"];
+  const reform_ramp = P["reform_ramp"];
+  const fellowship_2010 = P["fellowship_2010"];
+  const fellowship_2024 = P["fellowship_2024"];
+  const fellowship_reform_target = P["fellowship_reform_target"];
+  const ncgp_budget_2010 = P["ncgp_budget_2010"];
+  const ncgp_budget_2024 = P["ncgp_budget_2024"];
+  const indig_share_base = P["indig_share_base"];
+  const indig_share_reform_target = P["indig_share_reform_target"];
+  const schemes_base = P["schemes_base"];
+  const schemes_reform_target = P["schemes_reform_target"];
+  const fellowship_removal = P["fellowship_removal"];
+  const indigenous_boost = P["indigenous_boost"];
+  const scheme_simplification = P["scheme_simplification"];
+  const initiate_boost = P["initiate_boost"];
+  const initiate_ecr_intake = P["initiate_ecr_intake"];
+  const initiate_retention_effect = P["initiate_retention_effect"];
+  const lead_mentor_boost = P["lead_mentor_boost"];
+  const lead_mentor_capacity = P["lead_mentor_capacity"];
+  const lead_mentor_senior_retention = P["lead_mentor_senior_retention"];
+  const lead_mentor_hdr = P["lead_mentor_hdr"];
+  const phd_per_mentoring = P["phd_per_mentoring"];
+  const hdr_per_project = P["hdr_per_project"];
+  const external_phd_supply = P["external_phd_supply"];
+  const phd_duration = P["phd_duration"];
+  const phd_to_ecr_fraction = P["phd_to_ecr_fraction"];
+  const ecr_duration = P["ecr_duration"];
+  const mcr_duration = P["mcr_duration"];
+  const base_attrition_fraction = P["base_attrition_fraction"];
+  const retirement_fraction = P["retirement_fraction"];
+  const avg_project_duration = P["avg_project_duration"];
+  const grant_adjust_time = P["grant_adjust_time"];
+  const indig_from_funding = P["indig_from_funding"];
+  const ecr_salary = P["ecr_salary"];
+  const indig_mentoring_gain = P["indig_mentoring_gain"];
+  const indig_capacity_ceiling = P["indig_capacity_ceiling"];
+  const indig_attrition = P["indig_attrition"];
+  const track_gain_per_impact = P["track_gain_per_impact"];
+  const track_decay = P["track_decay"];
+  const impact_per_project = P["impact_per_project"];
+  const impact_decay = P["impact_decay"];
+  const roi_per_impact = P["roi_per_impact"];
+  const base_cost_inflation = P["base_cost_inflation"];
+  const concentration_cost_sensitivity = P["concentration_cost_sensitivity"];
+  const collab_gain = P["collab_gain"];
+  const impact_ref = P["impact_ref"];
+  const partner_pool = P["partner_pool"];
+  const partner_ref = P["partner_ref"];
+  const collab_decay = P["collab_decay"];
+  const cocontribution_rate = P["cocontribution_rate"];
+  const admin_per_scheme = P["admin_per_scheme"];
+  const admin_per_project = P["admin_per_project"];
+  const research_time_loss_per_burden = P["research_time_loss_per_burden"];
+  const ecr_capacity_weight = P["ecr_capacity_weight"];
+  const researchers_per_project = P["researchers_per_project"];
+  const mentor_per_senior = P["mentor_per_senior"];
+  const mentor_per_mcr = P["mentor_per_mcr"];
+  const precarity_base = P["precarity_base"];
+  const precarity_fellowship_sens = P["precarity_fellowship_sens"];
+  const fellowship_ref = P["fellowship_ref"];
+  const precarity_opportunity_sens = P["precarity_opportunity_sens"];
+  const projects_ref = P["projects_ref"];
+  const precarity_attrition_sens = P["precarity_attrition_sens"];
+  const pull_sens = P["pull_sens"];
+  const external_labour_pull = P["external_labour_pull"];
+  const congestion_sens = P["congestion_sens"];
+  const mcr_congestion_ref = P["mcr_congestion_ref"];
+  const concentration_base = P["concentration_base"];
+  const concentration_track_sens = P["concentration_track_sens"];
+  const track_ref = P["track_ref"];
+  const concentration_dispersal_sens = P["concentration_dispersal_sens"];
+  const dispersal_output_elasticity = P["dispersal_output_elasticity"];
+  const reserve_share = P["reserve_share"];
+  const turnaround_base = P["turnaround_base"];
+  const turnaround_load_sens = P["turnaround_load_sens"];
+  const review_capacity = P["review_capacity"];
+  const turnaround_sens = P["turnaround_sens"];
+  const track_quality_gain = P["track_quality_gain"];
+  const s0 = {};
+  s0["PhD_pipeline"] = 11000.0;
+  s0["ECR_researchers"] = 3000.0;
+  s0["MCR_researchers"] = 6100.0;
+  s0["SCR_researchers"] = 8900.0;
+  s0["Active_projects"] = 5000.0;
+  s0["Indigenous_researchers"] = 240.0;
+  s0["Track_record"] = 1.0;
+  s0["Knowledge_impact"] = 100.0;
+  s0["Avg_project_cost"] = 385000.0;
+  s0["Collaboration_intensity"] = 0.33;
+  return s0;
+}
+
+function auxValues(S, P, t) {
+  const hist_start = P["hist_start"];
+  const hist_end = P["hist_end"];
+  const reform_year = P["reform_year"];
+  const reform_ramp = P["reform_ramp"];
+  const fellowship_2010 = P["fellowship_2010"];
+  const fellowship_2024 = P["fellowship_2024"];
+  const fellowship_reform_target = P["fellowship_reform_target"];
+  const ncgp_budget_2010 = P["ncgp_budget_2010"];
+  const ncgp_budget_2024 = P["ncgp_budget_2024"];
+  const indig_share_base = P["indig_share_base"];
+  const indig_share_reform_target = P["indig_share_reform_target"];
+  const schemes_base = P["schemes_base"];
+  const schemes_reform_target = P["schemes_reform_target"];
+  const fellowship_removal = P["fellowship_removal"];
+  const indigenous_boost = P["indigenous_boost"];
+  const scheme_simplification = P["scheme_simplification"];
+  const initiate_boost = P["initiate_boost"];
+  const initiate_ecr_intake = P["initiate_ecr_intake"];
+  const initiate_retention_effect = P["initiate_retention_effect"];
+  const lead_mentor_boost = P["lead_mentor_boost"];
+  const lead_mentor_capacity = P["lead_mentor_capacity"];
+  const lead_mentor_senior_retention = P["lead_mentor_senior_retention"];
+  const lead_mentor_hdr = P["lead_mentor_hdr"];
+  const phd_per_mentoring = P["phd_per_mentoring"];
+  const hdr_per_project = P["hdr_per_project"];
+  const external_phd_supply = P["external_phd_supply"];
+  const phd_duration = P["phd_duration"];
+  const phd_to_ecr_fraction = P["phd_to_ecr_fraction"];
+  const ecr_duration = P["ecr_duration"];
+  const mcr_duration = P["mcr_duration"];
+  const base_attrition_fraction = P["base_attrition_fraction"];
+  const retirement_fraction = P["retirement_fraction"];
+  const avg_project_duration = P["avg_project_duration"];
+  const grant_adjust_time = P["grant_adjust_time"];
+  const indig_from_funding = P["indig_from_funding"];
+  const ecr_salary = P["ecr_salary"];
+  const indig_mentoring_gain = P["indig_mentoring_gain"];
+  const indig_capacity_ceiling = P["indig_capacity_ceiling"];
+  const indig_attrition = P["indig_attrition"];
+  const track_gain_per_impact = P["track_gain_per_impact"];
+  const track_decay = P["track_decay"];
+  const impact_per_project = P["impact_per_project"];
+  const impact_decay = P["impact_decay"];
+  const roi_per_impact = P["roi_per_impact"];
+  const base_cost_inflation = P["base_cost_inflation"];
+  const concentration_cost_sensitivity = P["concentration_cost_sensitivity"];
+  const collab_gain = P["collab_gain"];
+  const impact_ref = P["impact_ref"];
+  const partner_pool = P["partner_pool"];
+  const partner_ref = P["partner_ref"];
+  const collab_decay = P["collab_decay"];
+  const cocontribution_rate = P["cocontribution_rate"];
+  const admin_per_scheme = P["admin_per_scheme"];
+  const admin_per_project = P["admin_per_project"];
+  const research_time_loss_per_burden = P["research_time_loss_per_burden"];
+  const ecr_capacity_weight = P["ecr_capacity_weight"];
+  const researchers_per_project = P["researchers_per_project"];
+  const mentor_per_senior = P["mentor_per_senior"];
+  const mentor_per_mcr = P["mentor_per_mcr"];
+  const precarity_base = P["precarity_base"];
+  const precarity_fellowship_sens = P["precarity_fellowship_sens"];
+  const fellowship_ref = P["fellowship_ref"];
+  const precarity_opportunity_sens = P["precarity_opportunity_sens"];
+  const projects_ref = P["projects_ref"];
+  const precarity_attrition_sens = P["precarity_attrition_sens"];
+  const pull_sens = P["pull_sens"];
+  const external_labour_pull = P["external_labour_pull"];
+  const congestion_sens = P["congestion_sens"];
+  const mcr_congestion_ref = P["mcr_congestion_ref"];
+  const concentration_base = P["concentration_base"];
+  const concentration_track_sens = P["concentration_track_sens"];
+  const track_ref = P["track_ref"];
+  const concentration_dispersal_sens = P["concentration_dispersal_sens"];
+  const dispersal_output_elasticity = P["dispersal_output_elasticity"];
+  const reserve_share = P["reserve_share"];
+  const turnaround_base = P["turnaround_base"];
+  const turnaround_load_sens = P["turnaround_load_sens"];
+  const review_capacity = P["review_capacity"];
+  const turnaround_sens = P["turnaround_sens"];
+  const track_quality_gain = P["track_quality_gain"];
+  const PhD_pipeline = S["PhD_pipeline"];
+  const ECR_researchers = S["ECR_researchers"];
+  const MCR_researchers = S["MCR_researchers"];
+  const SCR_researchers = S["SCR_researchers"];
+  const Active_projects = S["Active_projects"];
+  const Indigenous_researchers = S["Indigenous_researchers"];
+  const Track_record = S["Track_record"];
+  const Knowledge_impact = S["Knowledge_impact"];
+  const Avg_project_cost = S["Avg_project_cost"];
+  const Collaboration_intensity = S["Collaboration_intensity"];
+  const TIME = t;
+  const hist_phase = (CLIP((TIME - hist_start)/(hist_end - hist_start), 0, 1));
+  const reform_phase = (CLIP((TIME - reform_year)/reform_ramp, 0, 1));
+  const fellowship_hist = (fellowship_2010 + (fellowship_2024 - fellowship_2010)*hist_phase);
+  const fellowship_share_eff = (fellowship_hist + (fellowship_reform_target - fellowship_hist)*fellowship_removal*reform_phase);
+  const NCGP_budget_eff = (ncgp_budget_2010 + (ncgp_budget_2024 - ncgp_budget_2010)*hist_phase);
+  const indig_share_eff = (indig_share_base + (indig_share_reform_target - indig_share_base)*indigenous_boost*reform_phase);
+  const schemes_eff = (schemes_base + (schemes_reform_target - schemes_base)*scheme_simplification*reform_phase);
+  const annual_project_cost = (Avg_project_cost/avg_project_duration);
+  const Administrative_burden = (admin_per_scheme*schemes_eff + admin_per_project*Active_projects);
+  const Effective_research_time = (MAX(0.2, 1 - research_time_loss_per_burden*Administrative_burden));
+  const effective_researchers = ((ECR_researchers*ecr_capacity_weight + MCR_researchers + SCR_researchers + Indigenous_researchers)*Effective_research_time);
+  const Available_researcher_capacity = (effective_researchers/researchers_per_project - Active_projects);
+  const Mentoring_capacity = (mentor_per_senior*SCR_researchers + mentor_per_mcr*MCR_researchers + lead_mentor_boost*lead_mentor_capacity*reform_phase);
+  const Mid_career_precarity = (MAX(0, precarity_base + precarity_fellowship_sens*(1 - fellowship_share_eff/fellowship_ref) - precarity_opportunity_sens*(Active_projects/projects_ref)));
+  const Attrition_pressure = (1 + precarity_attrition_sens*Mid_career_precarity + pull_sens*external_labour_pull + congestion_sens*(MCR_researchers/mcr_congestion_ref));
+  const Funding_concentration = (MAX(0, MIN(1, concentration_base + concentration_track_sens*(Track_record/track_ref) - concentration_dispersal_sens*(Active_projects/projects_ref))));
+  const dispersal_quality = (1 + dispersal_output_elasticity*(0.5 - Funding_concentration));
+  const Project_funding_pool = (NCGP_budget_eff*(1 - fellowship_share_eff - indig_share_eff - reserve_share) + cocontribution_rate*Collaboration_intensity*NCGP_budget_eff - Active_projects*annual_project_cost);
+  const funding_slack_projects = (Project_funding_pool/annual_project_cost);
+  const Peer_review_turnaround = (turnaround_base*(1 + turnaround_load_sens*(Active_projects/review_capacity)));
+  const throughput_factor = (1/(1 + turnaround_sens*Peer_review_turnaround));
+  const quality_factor = (1 + track_quality_gain*(Track_record/track_ref - 1));
+  const total_researchers = (ECR_researchers + MCR_researchers + SCR_researchers);
+  const ecr_share = (ECR_researchers/MAX(1, total_researchers));
+  const mcr_share = (MCR_researchers/MAX(1, total_researchers));
+  const scr_share = (SCR_researchers/MAX(1, total_researchers));
+  const economic_return = (Knowledge_impact*roi_per_impact);
+  return {"hist_phase": hist_phase, "reform_phase": reform_phase, "fellowship_hist": fellowship_hist, "fellowship_share_eff": fellowship_share_eff, "NCGP_budget_eff": NCGP_budget_eff, "indig_share_eff": indig_share_eff, "schemes_eff": schemes_eff, "annual_project_cost": annual_project_cost, "Administrative_burden": Administrative_burden, "Effective_research_time": Effective_research_time, "effective_researchers": effective_researchers, "Available_researcher_capacity": Available_researcher_capacity, "Mentoring_capacity": Mentoring_capacity, "Mid_career_precarity": Mid_career_precarity, "Attrition_pressure": Attrition_pressure, "Funding_concentration": Funding_concentration, "dispersal_quality": dispersal_quality, "Project_funding_pool": Project_funding_pool, "funding_slack_projects": funding_slack_projects, "Peer_review_turnaround": Peer_review_turnaround, "throughput_factor": throughput_factor, "quality_factor": quality_factor, "total_researchers": total_researchers, "ecr_share": ecr_share, "mcr_share": mcr_share, "scr_share": scr_share, "economic_return": economic_return};
+}
+
+function deriv(S, P, t) {
+  const hist_start = P["hist_start"];
+  const hist_end = P["hist_end"];
+  const reform_year = P["reform_year"];
+  const reform_ramp = P["reform_ramp"];
+  const fellowship_2010 = P["fellowship_2010"];
+  const fellowship_2024 = P["fellowship_2024"];
+  const fellowship_reform_target = P["fellowship_reform_target"];
+  const ncgp_budget_2010 = P["ncgp_budget_2010"];
+  const ncgp_budget_2024 = P["ncgp_budget_2024"];
+  const indig_share_base = P["indig_share_base"];
+  const indig_share_reform_target = P["indig_share_reform_target"];
+  const schemes_base = P["schemes_base"];
+  const schemes_reform_target = P["schemes_reform_target"];
+  const fellowship_removal = P["fellowship_removal"];
+  const indigenous_boost = P["indigenous_boost"];
+  const scheme_simplification = P["scheme_simplification"];
+  const initiate_boost = P["initiate_boost"];
+  const initiate_ecr_intake = P["initiate_ecr_intake"];
+  const initiate_retention_effect = P["initiate_retention_effect"];
+  const lead_mentor_boost = P["lead_mentor_boost"];
+  const lead_mentor_capacity = P["lead_mentor_capacity"];
+  const lead_mentor_senior_retention = P["lead_mentor_senior_retention"];
+  const lead_mentor_hdr = P["lead_mentor_hdr"];
+  const phd_per_mentoring = P["phd_per_mentoring"];
+  const hdr_per_project = P["hdr_per_project"];
+  const external_phd_supply = P["external_phd_supply"];
+  const phd_duration = P["phd_duration"];
+  const phd_to_ecr_fraction = P["phd_to_ecr_fraction"];
+  const ecr_duration = P["ecr_duration"];
+  const mcr_duration = P["mcr_duration"];
+  const base_attrition_fraction = P["base_attrition_fraction"];
+  const retirement_fraction = P["retirement_fraction"];
+  const avg_project_duration = P["avg_project_duration"];
+  const grant_adjust_time = P["grant_adjust_time"];
+  const indig_from_funding = P["indig_from_funding"];
+  const ecr_salary = P["ecr_salary"];
+  const indig_mentoring_gain = P["indig_mentoring_gain"];
+  const indig_capacity_ceiling = P["indig_capacity_ceiling"];
+  const indig_attrition = P["indig_attrition"];
+  const track_gain_per_impact = P["track_gain_per_impact"];
+  const track_decay = P["track_decay"];
+  const impact_per_project = P["impact_per_project"];
+  const impact_decay = P["impact_decay"];
+  const roi_per_impact = P["roi_per_impact"];
+  const base_cost_inflation = P["base_cost_inflation"];
+  const concentration_cost_sensitivity = P["concentration_cost_sensitivity"];
+  const collab_gain = P["collab_gain"];
+  const impact_ref = P["impact_ref"];
+  const partner_pool = P["partner_pool"];
+  const partner_ref = P["partner_ref"];
+  const collab_decay = P["collab_decay"];
+  const cocontribution_rate = P["cocontribution_rate"];
+  const admin_per_scheme = P["admin_per_scheme"];
+  const admin_per_project = P["admin_per_project"];
+  const research_time_loss_per_burden = P["research_time_loss_per_burden"];
+  const ecr_capacity_weight = P["ecr_capacity_weight"];
+  const researchers_per_project = P["researchers_per_project"];
+  const mentor_per_senior = P["mentor_per_senior"];
+  const mentor_per_mcr = P["mentor_per_mcr"];
+  const precarity_base = P["precarity_base"];
+  const precarity_fellowship_sens = P["precarity_fellowship_sens"];
+  const fellowship_ref = P["fellowship_ref"];
+  const precarity_opportunity_sens = P["precarity_opportunity_sens"];
+  const projects_ref = P["projects_ref"];
+  const precarity_attrition_sens = P["precarity_attrition_sens"];
+  const pull_sens = P["pull_sens"];
+  const external_labour_pull = P["external_labour_pull"];
+  const congestion_sens = P["congestion_sens"];
+  const mcr_congestion_ref = P["mcr_congestion_ref"];
+  const concentration_base = P["concentration_base"];
+  const concentration_track_sens = P["concentration_track_sens"];
+  const track_ref = P["track_ref"];
+  const concentration_dispersal_sens = P["concentration_dispersal_sens"];
+  const dispersal_output_elasticity = P["dispersal_output_elasticity"];
+  const reserve_share = P["reserve_share"];
+  const turnaround_base = P["turnaround_base"];
+  const turnaround_load_sens = P["turnaround_load_sens"];
+  const review_capacity = P["review_capacity"];
+  const turnaround_sens = P["turnaround_sens"];
+  const track_quality_gain = P["track_quality_gain"];
+  const PhD_pipeline = S["PhD_pipeline"];
+  const ECR_researchers = S["ECR_researchers"];
+  const MCR_researchers = S["MCR_researchers"];
+  const SCR_researchers = S["SCR_researchers"];
+  const Active_projects = S["Active_projects"];
+  const Indigenous_researchers = S["Indigenous_researchers"];
+  const Track_record = S["Track_record"];
+  const Knowledge_impact = S["Knowledge_impact"];
+  const Avg_project_cost = S["Avg_project_cost"];
+  const Collaboration_intensity = S["Collaboration_intensity"];
+  const TIME = t;
+  const hist_phase = (CLIP((TIME - hist_start)/(hist_end - hist_start), 0, 1));
+  const reform_phase = (CLIP((TIME - reform_year)/reform_ramp, 0, 1));
+  const fellowship_hist = (fellowship_2010 + (fellowship_2024 - fellowship_2010)*hist_phase);
+  const fellowship_share_eff = (fellowship_hist + (fellowship_reform_target - fellowship_hist)*fellowship_removal*reform_phase);
+  const NCGP_budget_eff = (ncgp_budget_2010 + (ncgp_budget_2024 - ncgp_budget_2010)*hist_phase);
+  const indig_share_eff = (indig_share_base + (indig_share_reform_target - indig_share_base)*indigenous_boost*reform_phase);
+  const schemes_eff = (schemes_base + (schemes_reform_target - schemes_base)*scheme_simplification*reform_phase);
+  const annual_project_cost = (Avg_project_cost/avg_project_duration);
+  const Administrative_burden = (admin_per_scheme*schemes_eff + admin_per_project*Active_projects);
+  const Effective_research_time = (MAX(0.2, 1 - research_time_loss_per_burden*Administrative_burden));
+  const effective_researchers = ((ECR_researchers*ecr_capacity_weight + MCR_researchers + SCR_researchers + Indigenous_researchers)*Effective_research_time);
+  const Available_researcher_capacity = (effective_researchers/researchers_per_project - Active_projects);
+  const Mentoring_capacity = (mentor_per_senior*SCR_researchers + mentor_per_mcr*MCR_researchers + lead_mentor_boost*lead_mentor_capacity*reform_phase);
+  const Mid_career_precarity = (MAX(0, precarity_base + precarity_fellowship_sens*(1 - fellowship_share_eff/fellowship_ref) - precarity_opportunity_sens*(Active_projects/projects_ref)));
+  const Attrition_pressure = (1 + precarity_attrition_sens*Mid_career_precarity + pull_sens*external_labour_pull + congestion_sens*(MCR_researchers/mcr_congestion_ref));
+  const Funding_concentration = (MAX(0, MIN(1, concentration_base + concentration_track_sens*(Track_record/track_ref) - concentration_dispersal_sens*(Active_projects/projects_ref))));
+  const dispersal_quality = (1 + dispersal_output_elasticity*(0.5 - Funding_concentration));
+  const Project_funding_pool = (NCGP_budget_eff*(1 - fellowship_share_eff - indig_share_eff - reserve_share) + cocontribution_rate*Collaboration_intensity*NCGP_budget_eff - Active_projects*annual_project_cost);
+  const funding_slack_projects = (Project_funding_pool/annual_project_cost);
+  const Peer_review_turnaround = (turnaround_base*(1 + turnaround_load_sens*(Active_projects/review_capacity)));
+  const throughput_factor = (1/(1 + turnaround_sens*Peer_review_turnaround));
+  const quality_factor = (1 + track_quality_gain*(Track_record/track_ref - 1));
+  const total_researchers = (ECR_researchers + MCR_researchers + SCR_researchers);
+  const ecr_share = (ECR_researchers/MAX(1, total_researchers));
+  const mcr_share = (MCR_researchers/MAX(1, total_researchers));
+  const scr_share = (SCR_researchers/MAX(1, total_researchers));
+  const economic_return = (Knowledge_impact*roi_per_impact);
+  const phd_intake = (phd_per_mentoring*Mentoring_capacity + hdr_per_project*Active_projects + external_phd_supply + lead_mentor_boost*lead_mentor_hdr*reform_phase);
+  const phd_graduation = (PhD_pipeline/phd_duration);
+  const ecr_recruit = ((PhD_pipeline/phd_duration)*phd_to_ecr_fraction);
+  const initiate_intake = (initiate_boost*initiate_ecr_intake*reform_phase);
+  const ecr_to_mcr = (ECR_researchers/ecr_duration);
+  const ecr_exit = (ECR_researchers*base_attrition_fraction*Attrition_pressure*(1 - initiate_boost*initiate_retention_effect*reform_phase));
+  const mcr_to_scr = (MCR_researchers/mcr_duration);
+  const mcr_exit = (MCR_researchers*base_attrition_fraction*Attrition_pressure*(1 - lead_mentor_boost*lead_mentor_senior_retention*reform_phase));
+  const scr_exit = (SCR_researchers*(base_attrition_fraction*Attrition_pressure + retirement_fraction)*(1 - lead_mentor_boost*lead_mentor_senior_retention*reform_phase));
+  const new_grants = (MAX(0, Active_projects/avg_project_duration + MIN(funding_slack_projects, Available_researcher_capacity)/grant_adjust_time)*throughput_factor*quality_factor);
+  const project_completion = (Active_projects/avg_project_duration);
+  const indig_build = (indig_from_funding*(indig_share_eff*NCGP_budget_eff/ecr_salary) + indig_mentoring_gain*Indigenous_researchers*(1 - Indigenous_researchers/indig_capacity_ceiling));
+  const indig_exit = (Indigenous_researchers*indig_attrition);
+  const track_gain = (Knowledge_impact*track_gain_per_impact);
+  const track_decay_flow = (Track_record*track_decay);
+  const production = (Active_projects*impact_per_project*Effective_research_time*dispersal_quality);
+  const impact_decay_flow = (Knowledge_impact*impact_decay);
+  const cost_escalation = (Avg_project_cost*(base_cost_inflation + concentration_cost_sensitivity*Funding_concentration));
+  const collab_growth = (collab_gain*(Knowledge_impact/impact_ref)*(partner_pool/partner_ref)*(1 - Collaboration_intensity));
+  const collab_decay_flow = (Collaboration_intensity*collab_decay);
+  const d = {};
+  d["PhD_pipeline"] = (phd_intake) - (phd_graduation);
+  d["ECR_researchers"] = (ecr_recruit + initiate_intake) - (ecr_to_mcr + ecr_exit);
+  d["MCR_researchers"] = (ecr_to_mcr) - (mcr_to_scr + mcr_exit);
+  d["SCR_researchers"] = (mcr_to_scr) - (scr_exit);
+  d["Active_projects"] = (new_grants) - (project_completion);
+  d["Indigenous_researchers"] = (indig_build) - (indig_exit);
+  d["Track_record"] = (track_gain) - (track_decay_flow);
+  d["Knowledge_impact"] = (production) - (impact_decay_flow);
+  d["Avg_project_cost"] = (cost_escalation) - (0);
+  d["Collaboration_intensity"] = (collab_growth) - (collab_decay_flow);
+  return d;
+}
+
+// Core stepper. opts may carry { initialStocks, start, stop } so the forward
+// run can be seeded from the calibration endpoint at t0. The integrator is
+// byte-identical to the checkpoint path validated in Stage 5.
+function stepAll(overrides, opts) {
+  opts = opts || {};
+  const P = Object.assign({}, BASE_PARAMS, overrides || {});
+  const dt = SIM.dt;
+  const start = (opts.start !== undefined) ? opts.start : SIM.start;
+  const stop = (opts.stop !== undefined) ? opts.stop : SIM.stop;
+  const method = (SIM.method || "rk4").toLowerCase();
+  let S = opts.initialStocks ? Object.assign({}, opts.initialStocks) : initials(P);
+  const mins = {}; STOCK_NAMES.forEach(s => mins[s] = S[s]);
+  const times = [];
+  const series = {}; REPORT_VARS.forEach(v => series[v] = []);
+  const STOCKSET = new Set(STOCK_NAMES);
+  function record(tt) {
+    const a = auxValues(S, P, tt);
+    times.push(tt);
+    REPORT_VARS.forEach(v => series[v].push(STOCKSET.has(v) ? S[v] : a[v]));
+  }
+  let t = start;
+  const nsteps = Math.round((stop - start) / dt);
+  record(start);
+  for (let i = 0; i < nsteps; i++) {
+    if (method === "euler") {
+      const k1 = deriv(S, P, t);
+      const ns = {}; STOCK_NAMES.forEach(s => ns[s] = S[s] + dt * k1[s]); S = ns;
+    } else {
+      const k1 = deriv(S, P, t);
+      const s2 = {}; STOCK_NAMES.forEach(s => s2[s] = S[s] + 0.5 * dt * k1[s]);
+      const k2 = deriv(s2, P, t + 0.5 * dt);
+      const s3 = {}; STOCK_NAMES.forEach(s => s3[s] = S[s] + 0.5 * dt * k2[s]);
+      const k3 = deriv(s3, P, t + 0.5 * dt);
+      const s4 = {}; STOCK_NAMES.forEach(s => s4[s] = S[s] + dt * k3[s]);
+      const k4 = deriv(s4, P, t + dt);
+      const ns = {};
+      STOCK_NAMES.forEach(s => ns[s] = S[s] + dt / 6.0 * (k1[s] + 2*k2[s] + 2*k3[s] + k4[s]));
+      S = ns;
+    }
+    t = start + (i + 1) * dt;
+    STOCK_NAMES.forEach(s => { if (S[s] < mins[s]) mins[s] = S[s]; });
+    record(t);
+  }
+  return { times: times, series: series, finalStocks: S, mins: mins };
+}
+
+// Full time series + endpoint stock vector — for the dashboard.
+function simulate(overrides, opts) { return stepAll(overrides, opts); }
+function final_state(overrides, opts) { return stepAll(overrides, opts).finalStocks; }
+
+// Checkpoint matrix — the Stage 5 validation path (numerics unchanged).
+function run(overrides, checkpoints, opts) {
+  const out = stepAll(overrides, opts);
+  const cpset = new Set(checkpoints.map(c => c.toFixed(6)));
+  const captured = {};
+  out.times.forEach((tt, i) => {
+    if (cpset.has(tt.toFixed(6))) {
+      const row = {};
+      REPORT_VARS.forEach(v => row[v] = out.series[v][i]);
+      captured[tt.toFixed(6)] = row;
+    }
+  });
+  return { checkpoints: captured, stock_mins: out.mins };
+}
+
+if (typeof require !== "undefined" && require.main === module) {
+  const fs = require("fs");
+  const scen = JSON.parse(fs.readFileSync(process.argv[2], "utf-8"));
+  const checkpoints = scen.checkpoints || [SIM.start, SIM.stop];
+  const out = { engine: "javascript", report_vars: REPORT_VARS, scenarios: {} };
+  scen.scenarios.forEach(sc => { out.scenarios[sc.name] = run(sc.overrides || {}, checkpoints); });
+  fs.writeFileSync(process.argv[3], JSON.stringify(out, null, 2));
+  console.log("PASS: javascript twin ran " + scen.scenarios.length + " scenario(s).");
+}
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { run, simulate, final_state, REPORT_VARS, STOCK_NAMES, SIM };
+}
+
+/* dashboard configuration */
+var DASH = {"title": "Australian NCGP Reform - Policy Explorer", "kicker": "iMORSE", "subtitle": "A validated system-dynamics model of the ARC National Competitive Grants Program. Left view reproduces documented history; right view lets you test the reforms forward.", "headline_var": "ECR_researchers", "forward_anchor": 2026, "forward_horizon": 10, "backcast_overrides": {}, "tiles": [{"var": "ECR_researchers", "label": "Early-career researchers", "unit": "people", "decimals": 0}, {"var": "Active_projects", "label": "Funded projects", "unit": "projects", "decimals": 0}, {"var": "total_researchers", "label": "Research workforce", "unit": "people", "decimals": 0}, {"var": "Indigenous_researchers", "label": "Indigenous researchers", "unit": "people", "decimals": 0}, {"var": "ecr_share", "label": "Early-career share", "unit": "", "decimals": 3}, {"var": "economic_return", "label": "Research-impact index", "unit": "", "decimals": 0}], "charts": [{"title": "Early-career researchers", "vars": ["ECR_researchers"], "y_label": "researchers", "invert_y": false}, {"title": "Funded projects (project-type grants)", "vars": ["Active_projects"], "y_label": "projects", "invert_y": false}, {"title": "Research-impact index", "vars": ["economic_return"], "y_label": "index (higher = more impact)", "invert_y": false}, {"title": "Research workforce by career stage", "vars": ["ECR_researchers", "MCR_researchers", "SCR_researchers"], "y_label": "researchers", "invert_y": false}, {"title": "Career-stage shares of the workforce", "vars": ["ecr_share", "mcr_share", "scr_share"], "y_label": "share (0-1)", "invert_y": false}, {"title": "Indigenous researchers", "vars": ["Indigenous_researchers"], "y_label": "researchers", "invert_y": false}, {"title": "Collaboration and funding concentration", "vars": ["Collaboration_intensity", "Funding_concentration"], "y_label": "index (0-1)", "invert_y": false}, {"title": "Mid-career precarity", "vars": ["Mid_career_precarity"], "y_label": "precarity index", "invert_y": false}], "controls": [{"param": "fellowship_removal", "label": "Remove senior/mid-career fellowships", "min": 0, "max": 1, "step": 0.1, "unit": "0-1", "description": "The core reform. At 1, salaried mid-career and senior fellowships are fully removed from 2027 and that money is redirected to project grants; at 0, fellowships continue as today."}, {"param": "indigenous_boost", "label": "Lift Indigenous funding 1% to 5%", "min": 0, "max": 1, "step": 0.1, "unit": "0-1", "description": "At 1, dedicated Indigenous research funding rises from about 1 percent of the program to 5 percent from 2027; at 0 it stays at 1 percent."}, {"param": "scheme_simplification", "label": "Simplify 15 schemes to 7", "min": 0, "max": 1, "step": 0.1, "unit": "0-1", "description": "At 1, the program is simplified from 15 schemes to 7 from 2027, lowering administrative burden and freeing researcher time; at 0 the current 15 schemes remain."}, {"param": "initiate_boost", "label": "Initiate + ECR salaries (early-career recruitment)", "min": 0, "max": 1, "step": 0.1, "unit": "0-1", "description": "The reform's dedicated early-career channel. At 1, the Initiate fellowship scheme (~300 grants/round, 0-5 years post-PhD) and early-career salary eligibility in all project grants recruit and retain early-career researchers from 2027; at 0 that channel is off."}, {"param": "lead_mentor_boost", "label": "Lead & Mentor (preserve senior mentoring)", "min": 0, "max": 1, "step": 0.1, "unit": "0-1", "description": "The reform's senior-mentoring channel. At 1, the Lead & Mentor scheme (~50 grants, each funding ~2 postdocs and ~2 HDRs) sustains senior/mid-career mentoring capacity and feeds the HDR pipeline from 2027, softening the loss from fellowship removal; at 0 it is off."}, {"param": "dispersal_output_elasticity", "label": "Dispersal-vs-concentration effect on output", "min": -0.5, "max": 1.0, "step": 0.1, "unit": "elasticity", "description": "The contested assumption. Above 0, spreading funding across more, smaller projects raises research output; below 0, concentrating funding on established performers raises it. Set it to test both sides of the debate."}, {"param": "external_labour_pull", "label": "Labour-market pull out of academia", "min": 0.5, "max": 3.0, "step": 0.1, "unit": "multiplier", "description": "How strongly industry and other sectors draw researchers out of academic research. Higher values mean faster attrition, especially when precarity is high."}], "scales": {"fellowship_removal": "0 = keep fellowships, 1 = fully removed from 2027; higher = more removed", "indigenous_boost": "0 = 1% funding, 1 = 5% funding; higher = more Indigenous funding", "scheme_simplification": "0 = 15 schemes, 1 = 7 schemes; higher = simpler program", "dispersal_output_elasticity": "negative = concentration raises output, positive = dispersal raises output; 0 = neutral", "external_labour_pull": "1 = baseline pull, 3 = strong pull; higher = faster attrition", "ecr_share": "0 to 1; share of the research workforce that is early-career (0-5 years post-PhD); higher = more early-career", "mcr_share": "0 to 1; share that is mid-career (6-15 years post-PhD); higher = more mid-career", "scr_share": "0 to 1; share that is senior (16+ years post-PhD); higher = more senior", "Collaboration_intensity": "0 to 1; intensity of collaboration with industry and end-users; higher = more collaborative", "Funding_concentration": "0 to 1; how concentrated funding is on established researchers/institutions; higher = more concentrated", "Mid_career_precarity": "index from 0; job insecurity for mid-career researchers; higher = more precarious", "initiate_boost": "0 = no early-career recruitment channel, 1 = full Initiate + ECR-salary recruitment/retention from 2027; higher = stronger", "lead_mentor_boost": "0 = no mentoring-preservation channel, 1 = full Lead & Mentor mentoring capacity + HDR feed from 2027; higher = stronger", "economic_return": "a relative index, higher = more research impact and economic return; it is not a dollar total - the $3.32-per-dollar figure is the calibration behind the index."}, "var_glossary": {"Active_projects": "Number of active project-type NCGP grants. Lower than the roughly 6,000 all-grant figure because it excludes fellowships and grants in establishment or reporting phases.", "total_researchers": "The NCGP-engaged research workforce (early-career + mid-career + senior). This is the pool competing for and holding ARC grants, not the whole university academic workforce.", "ECR_researchers": "Early-career researchers, 0-5 years post-PhD, in the NCGP-engaged workforce. The reform lifts this mainly through the Initiate and Lead & Mentor schemes, not through redistributing fellowship money to projects.", "MCR_researchers": "Mid-career researchers, 6-15 years post-PhD.", "SCR_researchers": "Senior researchers, 16+ years post-PhD.", "ecr_share": "Share of the workforce that is early-career. The reform aims to lift this.", "mcr_share": "Share of the workforce that is mid-career. Watch this for the 'mid-career cliff'.", "scr_share": "Share of the workforce that is senior.", "Indigenous_researchers": "Number of Indigenous researchers supported in the NCGP. A slow-building capability stock.", "Collaboration_intensity": "How intensively projects collaborate with industry and end-users, indexed 0-1 and calibrated to the rising industry cash-contribution share.", "Funding_concentration": "How concentrated funding is on established researchers and institutions (the Matthew effect), indexed 0-1.", "Mid_career_precarity": "Job insecurity for mid-career researchers, which rises when fellowships are removed and project opportunities are scarce, and which drives attrition.", "economic_return": "The research-impact index - a relative measure of the research the NCGP produces and its economic value. The number shown is an index (higher = more), not a dollar amount: it scales modelled research output by an estimated $3.32 of economic return per dollar the ARC invests. Read it by comparing across scenarios and over time, not as an absolute."}, "presets": [{"name": "Full reform (all seven schemes)", "description": "The reform as reviewed: fellowships removed and redirected to projects, Indigenous funding to 5%, 15 schemes to 7, and the Initiate + Lead & Mentor early-career/mentoring schemes active.", "levers": {"fellowship_removal": 1, "indigenous_boost": 1, "scheme_simplification": 1, "initiate_boost": 1, "lead_mentor_boost": 1, "dispersal_output_elasticity": 0.3, "external_labour_pull": 1.0}}, {"name": "Reform, funding redistribution only", "description": "Fellowship removal, Indigenous and scheme reforms on, but the Initiate and Lead & Mentor scheme channels OFF - isolates how much of the early-career gain comes from the schemes versus moving money to projects.", "levers": {"fellowship_removal": 1, "indigenous_boost": 1, "scheme_simplification": 1, "initiate_boost": 0, "lead_mentor_boost": 0, "dispersal_output_elasticity": 0.3, "external_labour_pull": 1.0}}, {"name": "Reform, keep fellowships", "description": "Everything on except fellowship removal - isolates the effect of removing salaried senior/mid-career fellowships.", "levers": {"fellowship_removal": 0, "indigenous_boost": 1, "scheme_simplification": 1, "initiate_boost": 1, "lead_mentor_boost": 1, "dispersal_output_elasticity": 0.3, "external_labour_pull": 1.0}}, {"name": "Full reform, concentration view", "description": "Full reform but assuming concentration (not dispersal) raises output - the sceptic's assumption.", "levers": {"fellowship_removal": 1, "indigenous_boost": 1, "scheme_simplification": 1, "initiate_boost": 1, "lead_mentor_boost": 1, "dispersal_output_elasticity": -0.3, "external_labour_pull": 1.0}}], "assumptions": [{"title": "Two views, one validated engine.", "body": "The left view reproduces documented ARC history 2010-2026 and is locked - it earns trust before any forecast. The right view re-anchors to today and runs the reforms forward. Both use the identical engine that passed the validation battery bit-identically."}, {"title": "Real dollars, and a program-engaged workforce.", "body": "All money is in real 2015 dollars. The workforce shown is the NCGP-engaged research pool - those competing for ARC grants - which contracts in the historical backcast under the funding squeeze. Under the full reform it grows again (about +20%, consistent with the ARC's own 'up to 20% more researchers' claim), because the Initiate and Lead & Mentor schemes recruit early-career researchers and retain senior mentors; with those scheme channels off, the workforce keeps contracting."}, {"title": "The contested assumption is a slider, not a hidden choice.", "body": "Whether spreading funding helps or dilutes research output is genuinely debated. Rather than bake in an answer, the dispersal-vs-concentration lever lets you test both, so the conclusion you reach is one you chose knowingly."}, {"title": "The early-career gain rests on the schemes, not the money shuffle.", "body": "Compare 'Full reform (all seven schemes)' with 'Reform, funding redistribution only'. Removing fellowships and moving the money to projects barely lifts early-career numbers on its own; almost all of the early-career gain comes from the Initiate scheme recruiting and retaining ECRs and Lead & Mentor preserving the senior mentoring that trains them. That is the reform's actual transmission mechanism."}, {"title": "Supply gates the reform.", "body": "The reforms are mostly demand-side. Their success is limited by slow-building supply: enough Indigenous researchers to absorb 5x funding, senior mentors to train the next generation, and a workforce not hollowed out by precarity. That lag is what this model shows and a static forecast cannot."}, {"title": "Read shapes, not decimals.", "body": "Treat the trajectories as directional and comparative, not precise predictions. The behavioural parameters are the model's main uncertainty; the levers let you see how much the conclusions depend on them."}], "time_units": "year", "calendar": null, "footer": "Self-contained \u00b7 no internet or software required beyond a browser \u00b7 engine verified bit-identical to the validated reference", "_dev": "staged", "base": {"fellowship_removal": 0.0, "indigenous_boost": 0.0, "scheme_simplification": 0.0, "initiate_boost": 0.0, "lead_mentor_boost": 0.0, "dispersal_output_elasticity": 0.3, "external_labour_pull": 1.0}};
+/* compute: two views, one engine */
+var DT = SIM.dt, T0 = (DASH.forward_anchor!==undefined && DASH.forward_anchor!==null) ? DASH.forward_anchor : SIM.stop;
+function calLabel(v){var c=DASH.calendar;if(!c)return null;var mt=(state.mode==="forward")?(T0+v):v;return ""+Math.round(c.year_at_t0+mt/c.units_per_year);}
+function merge(a,b){var o={};for(var k in a)o[k]=a[k];if(b)for(var k in b)o[k]=b[k];return o;}
+function computeBackcast(p){ return simulate(merge(DASH.backcast_overrides, p||{})); }
+function anchorState(){
+  var run = simulate(DASH.backcast_overrides);
+  var bi = 0, bd = Infinity;
+  for(var i=0;i<run.times.length;i++){ var d=Math.abs(run.times[i]-T0); if(d<bd){bd=d;bi=i;} }
+  var y0 = {};
+  STOCK_NAMES.forEach(function(s){ y0[s] = run.series[s][bi]; });
+  return y0;
+}
+function computeForward(p){
+  return simulate(p||{}, { initialStocks:anchorState(), start:T0, stop:T0+DASH.forward_horizon });
+}
+/* state */
+var state={ mode:"validation", active:"A", A:{}, B:{}, selectedPreset:{} };
+function presetMatches(which,pi){var p=DASH.presets&&DASH.presets[pi];if(!p)return false;var lv=p.levers||{},t=state[which],B=DASH.base||{},cs=DASH.controls||[];for(var i=0;i<cs.length;i++){var c=cs[i],k=c.param,v=(lv[k]!==undefined)?lv[k]:B[k];if(v==null)v=0;if(v<c.min)v=c.min;if(v>c.max)v=c.max;var cur=(t[k]==null?(B[k]==null?0:B[k]):t[k]);if(Math.abs(cur-v)>1e-6*Math.max(1,Math.abs(v)))return false;}return true;}
+function stylePresetBtns(){var sel=state.selectedPreset[state.active];Array.prototype.forEach.call(document.querySelectorAll(".presetbtn"),function(b){var pi=+b.getAttribute("data-pi");if(pi===sel&&presetMatches(state.active,pi)){b.style.background=COL[state.active];b.style.color="#fff";b.style.borderColor=COL[state.active];}else if(pi===sel){b.style.background="#d7dbe3";b.style.color="#333";b.style.borderColor="#b9bfca";}else{b.style.background="#fff";b.style.color="";b.style.borderColor=MUTE;}});}
+(DASH.controls||[]).forEach(function(c){ state.A[c.param]=DASH.base[c.param]; state.B[c.param]=DASH.base[c.param]; });
+var COL={A:"#2E5E8C",B:"#B5651D",CAL:"#2E5E8C"}, INK="#1E2A33", MUTE="#5B6470", HAIR="#E4E0D8";
+var VARCOL=["#2E5E8C","#B5651D","#55803E","#7A4A8C"];
+var CHARTMETA=[];
+var VARGLOSS=DASH.var_glossary||{};
+var CUNIT={}; (DASH.controls||[]).forEach(function(c){ CUNIT[c.param]=c.unit||""; });
+function glossVars(){
+  if(!Object.keys(VARGLOSS).length) return "";
+  var seen={}, order=[];
+  (DASH.charts||[]).forEach(function(ch){ ch.vars.forEach(function(v){ if(!seen[v]){seen[v]=1; order.push(v);} }); });
+  (DASH.tiles||[]).forEach(function(t){ if(!seen[t.var]){seen[t.var]=1; order.push(t.var);} });
+  return '<div class="gloss"><h3>What the chart variables mean</h3>'+order.map(function(v){
+    return '<div class="gi"><b>'+v+'</b>'+(VARGLOSS[v]||"")+((DASH.scales||{})[v]?' <span class="gr">Scale: '+(DASH.scales||{})[v]+'</span>':'')+'</div>'; }).join("")+'</div>';
+}
+function el(id){return document.getElementById(id);}
+function fmt(v,d){ if(!isFinite(v))return "-"; d=(d===undefined?1:d); return v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+/* chart (SVG, no libraries) */
+function chartSVG(xs, sers, yLabel, invert, ci){
+  var W=560,H=240,padL=54,padR=14,padT=12,padB=34;
+  var ymin=Infinity,ymax=-Infinity;
+  sers.forEach(function(s){ s.ys.forEach(function(y){ if(isFinite(y)){ if(y<ymin)ymin=y; if(y>ymax)ymax=y; } }); });
+  if(ymin===ymax){ymax=ymin+1;} var pad=(ymax-ymin)*0.08; ymin-=pad; ymax+=pad;
+  var xmin=xs[0], xmax=xs[xs.length-1]; if(xmax===xmin)xmax=xmin+1;
+  function X(x){return padL+(x-xmin)/(xmax-xmin)*(W-padL-padR);}
+  function Y(y){var yy=invert?(ymin+ymax-y):y; return padT+(ymax-yy)/(ymax-ymin)*(H-padT-padB);}
+  var grid="",ticks=4;
+  for(var i=0;i<=ticks;i++){ var yv=ymin+(ymax-ymin)*i/ticks; var py=Y(yv);
+    grid+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+py+'" y2="'+py+'" stroke="'+HAIR+'"/>'+
+          '<text x="'+(padL-6)+'" y="'+(py+3)+'" text-anchor="end" font-size="10" fill="'+MUTE+'">'+fmt(yv, (ymax-ymin)<5?2:0)+'</text>'; }
+  var xticks=5, xspan=(xmax-xmin), xdecimals=(xspan<5?1:0);
+  for(var i=0;i<=xticks;i++){ var xv=xmin+xspan*i/xticks; var px=X(xv);
+    grid+='<line x1="'+px+'" x2="'+px+'" y1="'+(H-padB)+'" y2="'+(H-padB+4)+'" stroke="'+MUTE+'"/>'+
+          '<text x="'+px+'" y="'+(H-padB+15)+'" text-anchor="middle" font-size="10" fill="'+MUTE+'">'+(calLabel(xv)||fmt(xv,xdecimals))+'</text>'; }
+  var lines="";
+  sers.forEach(function(s){
+    var d=""; for(var i=0;i<xs.length;i++){ d+=(i?"L":"M")+X(xs[i]).toFixed(1)+" "+Y(s.ys[i]).toFixed(1); }
+    lines+='<path d="'+d+'" fill="none" stroke="'+s.color+'" stroke-width="'+(s.dashed?2.0:2.6)+'"'+(s.dashed?' stroke-dasharray="5 3"':'')+'/>';
+  });
+  CHARTMETA[ci]={xs:xs,sers:sers,xmin:xmin,xmax:xmax,ymin:ymin,ymax:ymax,W:W,H:H,padL:padL,padR:padR,padT:padT,padB:padB};
+  var anchorMark=""; if(state.mode!=="forward"&&T0>xmin&&T0<xmax){var ax=X(T0).toFixed(1); anchorMark='<line x1="'+ax+'" x2="'+ax+'" y1="'+padT+'" y2="'+(H-padB)+'" stroke="'+INK+'" stroke-dasharray="4 3"/>';}
+  var cross='<line class="cx" x1="0" x2="0" y1="'+padT+'" y2="'+(H-padB)+'" stroke="'+MUTE+'" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>';
+  var xlab='<text x="'+((padL+W-padR)/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="10" fill="'+MUTE+'">'+(DASH.calendar?"year":DASH.time_units+(state.mode==="forward"?" from today":""))+'</text>';
+  var ylab='<text transform="translate(13,'+((padT+H-padB)/2)+') rotate(-90)" text-anchor="middle" font-size="10" fill="'+MUTE+'">'+yLabel+'</text>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block" class="chsvg" data-ci="'+ci+'">'+grid+lines+anchorMark+cross+xlab+ylab+'</svg>';
+}
+
+/* render */
+function activeRun(which){ return state.mode==="forward"?computeForward(state[which]):computeBackcast({}); }
+function xAxis(out){ return out.times.map(function(t){ return state.mode==="forward"?(t-T0):t; }); }
+
+function renderModebar(){
+  el("modebar").innerHTML=[["validation","Validation - backcast (reproduces history)"],
+                           ["forward","Forward - policy (today → +"+DASH.forward_horizon+" "+DASH.time_units+")"]]
+    .map(function(m){ var on=state.mode===m[0];
+      return '<button class="modebtn" data-m="'+m[0]+'" style="'+(on?'background:'+INK+';color:#fff;border-color:'+INK:'')+'">'+m[1]+'</button>'; }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll('.modebtn'),function(b){
+    b.onclick=function(){ state.mode=b.getAttribute('data-m'); renderAll(); }; });
+}
+/* Tile UX (injected into the dashboard <script> by build_dashboard_v3.py).
+   Two behaviours, both presentation-only (the validated engine is untouched):
+   1) On the VALIDATION view the metric tiles read the value at the END OF THE
+      BACKCAST - the calibration anchor / dashed line (T0) - not the last plotted
+      point, whose series usually runs past it. Forward tiles read the end of the
+      forward period, as before.
+   2) Each tile shows an INSTANT styled tooltip on hover (reusing the chart #chartTip
+      element) that pairs the variable's glossary description with its `scales` line,
+      so the number's MEANING is explicit. Make the words relate to the DISPLAYED
+      value: for an invented index, say it IS an index and how to read it (higher =
+      more; a comparative number, not a dollar or unit total), not only what it
+      measures - otherwise a reader sees, e.g., "277" beside a "$3.32" in the text and
+      cannot connect the two. Put the "what the number means" in the spec `scales`. */
+(function(){ var st=document.createElement("style");
+  st.textContent="#chartTip .ttbody{max-width:250px;line-height:1.4;white-space:normal}#chartTip .ttscale{margin-top:5px;color:var(--mute);font-size:11px}";
+  (document.head||document.documentElement).appendChild(st); })();
+function renderTiles(){
+  var fwd=state.mode==="forward";var run=fwd?computeForward(state[state.active]):computeBackcast({});
+  var idx=run.times.length-1;
+  if(!fwd){ var best=Infinity; for(var i=0;i<run.times.length;i++){ var d=Math.abs(run.times[i]-T0); if(d<best){best=d; idx=i;} } }
+  var yr=DASH.calendar?calLabel(run.times[idx]):(""+Math.round(run.times[idx]));
+  var when=fwd?("Scenario "+state.active+" \u00b7 at end of forward period (+"+DASH.forward_horizon+" "+DASH.time_units+(DASH.forward_horizon==1?"":"s")+")"):("as at "+yr+" (end of backcast)");
+  el("tiles").innerHTML=(DASH.tiles||[]).map(function(t){
+    var arr=run.series[t.var]; var v=arr?arr[idx]:NaN;
+    return '<div class="tile" data-tv="'+t.var+'"><div class="tl">'+t.label+(t.unit?' ('+t.unit+')':'')+'</div><div class="tv">'+fmt(v,t.decimals)+'</div><div class="tw">'+when+'</div></div>'; }).join("");
+  attachTileHover();
+}
+function attachTileHover(){
+  var tip=el("chartTip");
+  if(!tip){ tip=document.createElement("div"); tip.id="chartTip"; document.body.appendChild(tip); }
+  Array.prototype.forEach.call(document.querySelectorAll(".tile[data-tv]"),function(tl){
+    var tv=tl.getAttribute("data-tv"); var desc=VARGLOSS[tv]||""; var sc=(DASH.scales||{})[tv]||""; if(!desc&&!sc){ return; }
+    tl.addEventListener("mousemove",function(evt){
+      tip.innerHTML='<div class="ttbody">'+desc+(sc?'<div class="ttscale">Reading the value: '+sc+'</div>':'')+'</div>'; tip.style.display="block";
+      var pad=14, tw=tip.offsetWidth||220, lx=evt.clientX+pad;
+      if(lx+tw>window.innerWidth-8){ lx=evt.clientX-tw-pad; }
+      tip.style.left=lx+"px"; tip.style.top=(evt.clientY+pad)+"px";
+    });
+    tl.addEventListener("mouseleave",function(){ tip.style.display="none"; });
+  });
+}
+
+function renderConsole(){
+  if(state.mode!=="forward"){ el("console").innerHTML='<div class="locked"><b>Validation view.</b> This run is locked: it reproduces the subject\u2019s known history to earn trust before any forecast. Switch to <b>Forward</b> to drive future policy.</div>'+glossVars(); return; }
+  var h='<div class="abtoggle">'+["A","B"].map(function(w){ var on=state.active===w;
+      return '<button class="abbtn" data-w="'+w+'" style="'+(on?'background:'+COL[w]+';color:#fff;border-color:'+COL[w]:'')+'">Scenario '+w+'</button>'; }).join("")+
+      '<button class="abbtn" id="resetbtn" style="margin-left:auto;color:'+MUTE+'" title="Return every lever in scenario '+state.active+' to its baseline value">Reset '+state.active+' to baseline</button></div>';
+  if(DASH.presets&&DASH.presets.length){
+    h+='<div style="margin:12px 0 4px"><div style="font-weight:600;margin-bottom:5px">Preset scenarios</div>'+
+      DASH.presets.map(function(p,pi){ return '<button class="presetbtn" data-pi="'+pi+'" title="'+String(p.description||"").replace(/"/g,"&quot;")+'" style="margin:0 6px 6px 0;padding:5px 10px;border:1px solid '+MUTE+';border-radius:6px;background:#fff;cursor:pointer;font:inherit">'+p.name+'</button>'; }).join("")+
+      '<div style="font-size:11px;color:'+MUTE+'">One click sets the levers in Scenario '+state.active+'; the button stays dark while those values hold, and turns grey if you change any.</div></div>';
+  }
+  (DASH.controls||[]).forEach(function(c){ var val=state[state.active][c.param];
+    h+='<div class="srow"><div class="slab"><span>'+c.label+'</span><span class="sval" data-k="'+c.param+'" style="color:'+COL[state.active]+'">'+(+val)+(c.unit?' '+c.unit:'')+'</span></div>'+
+       '<input type="range" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+val+'" data-k="'+c.param+'"></div>'; });
+  h+='<div class="gloss"><h3>What the levers mean</h3>'+(DASH.controls||[]).map(function(c){
+    var g=c.description||""; var base=DASH.base[c.param]; var sc=(DASH.scales||{})[c.param];
+    return '<div class="gi"><b>'+c.label+'</b>'+g+' <span class="gr">Range '+c.min+'-'+c.max+(c.unit?' '+c.unit:'')+' \u00b7 baseline '+base+'.</span>'+(sc?' <span class="gr">Scale: '+sc+'</span>':'')+'</div>'; }).join("")+'</div>';
+  h+=glossVars();
+  el("console").innerHTML=h;
+  Array.prototype.forEach.call(document.querySelectorAll('.abbtn'),function(b){ b.onclick=function(){ state.active=b.getAttribute('data-w'); renderAll(); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('.presetbtn'),function(b){ b.onclick=function(){
+    var p=DASH.presets[+b.getAttribute('data-pi')]||{}, t=state[state.active], lv=p.levers||{};
+    for(var bk in DASH.base){ t[bk]=DASH.base[bk]; }
+    (DASH.controls||[]).forEach(function(c){ if(lv[c.param]!==undefined){
+      var v=lv[c.param]; if(v<c.min)v=c.min; if(v>c.max)v=c.max; t[c.param]=v; } });
+    state.selectedPreset[state.active]=+b.getAttribute('data-pi');
+    renderAll(); }; });
+  Array.prototype.forEach.call(el("console").querySelectorAll('input[type=range]'),function(inp){
+    inp.oninput=function(){ var k=inp.getAttribute('data-k'), v=parseFloat(inp.value);
+      state[state.active][k]=v;
+      var sv=el("console").querySelector('.sval[data-k="'+k+'"]');
+      if(sv) sv.textContent=v+(CUNIT[k]?' '+CUNIT[k]:'');
+      stylePresetBtns(); renderTiles(); renderCharts(); }; });
+  var rb=el("resetbtn");
+  if(rb) rb.onclick=function(){ var t=state[state.active];
+    for(var k in DASH.base) t[k]=DASH.base[k]; state.selectedPreset[state.active]=undefined; renderAll(); };
+  stylePresetBtns();
+}
+function renderCharts(){
+  var html="";
+  CHARTMETA=[];
+  function key(ch){ return ch.vars.map(function(v,vi){
+      return '<span class="ki"><span class="ksw" style="background:'+VARCOL[vi%VARCOL.length]+'"></span>'+v+'</span>'; }).join(""); }
+  if(state.mode==="forward"){
+    var A=computeForward(state.A), B=computeForward(state.B), xs=xAxis(A);
+    (DASH.charts||[]).forEach(function(ch,ci){
+      var sers=[]; ch.vars.forEach(function(v,vi){ var c=VARCOL[vi%VARCOL.length];
+        sers.push({ys:A.series[v],color:c,dashed:false,label:v+" - A"});
+        sers.push({ys:B.series[v],color:c,dashed:true,label:v+" - B"}); });
+      html+='<div class="card"><div class="ctitle">'+ch.title+'</div>'+chartSVG(xs,sers,ch.y_label,ch.invert_y,ci)+
+            '<div class="legend">'+key(ch)+'<span class="ki" style="color:'+MUTE+'">solid = Scenario A &nbsp;\u00b7&nbsp; dashed = Scenario B</span></div></div>';
+    });
+  } else {
+    var C=computeBackcast({}), xs=xAxis(C);
+    (DASH.charts||[]).forEach(function(ch,ci){
+      var sers=ch.vars.map(function(v,vi){ return {ys:C.series[v],color:VARCOL[vi%VARCOL.length],dashed:false,label:v}; });
+      html+='<div class="card"><div class="ctitle">'+ch.title+'</div>'+chartSVG(xs,sers,ch.y_label,ch.invert_y,ci)+
+            '<div class="legend">'+key(ch)+'<span class="ki" style="color:'+MUTE+'">Calibration backcast - reproduces history; dashed vertical line = calibration anchor</span></div></div>';
+    });
+  }
+  el("charts").innerHTML=html;
+  attachHover();
+}
+function attachHover(){
+  var tip=el("chartTip");
+  if(!tip){ tip=document.createElement("div"); tip.id="chartTip"; document.body.appendChild(tip); }
+  Array.prototype.forEach.call(document.querySelectorAll("svg.chsvg"),function(svg){
+    var ci=parseInt(svg.getAttribute("data-ci"),10), m=CHARTMETA[ci]; if(!m)return;
+    var cx=svg.querySelector(".cx");
+    svg.addEventListener("mousemove",function(evt){
+      var r=svg.getBoundingClientRect(), px=(evt.clientX-r.left)*m.W/r.width;
+      if(px<m.padL-2||px>m.W-m.padR+2){ cx.style.display="none"; tip.style.display="none"; return; }
+      var xv=m.xmin+(px-m.padL)/(m.W-m.padL-m.padR)*(m.xmax-m.xmin);
+      var bi=0,bd=Infinity; for(var i=0;i<m.xs.length;i++){ var d=Math.abs(m.xs[i]-xv); if(d<bd){bd=d;bi=i;} }
+      var sx=m.padL+(m.xs[bi]-m.xmin)/(m.xmax-m.xmin)*(m.W-m.padL-m.padR);
+      cx.setAttribute("x1",sx); cx.setAttribute("x2",sx); cx.style.display="";
+      var dec=(m.ymax-m.ymin)<5?3:1;
+      var h='<div class="tt">'+(calLabel(m.xs[bi])||(DASH.time_units+' '+fmt(m.xs[bi],(m.xmax-m.xmin)<5?2:1)+(state.mode==="forward"?" from today":"")))+'</div>';
+      m.sers.forEach(function(s){ h+='<div class="tr"><span class="sw" style="background:'+s.color+(s.dashed?';opacity:.55':'')+'"></span>'+(s.label||"")+'<span class="tvv">'+fmt(s.ys[bi],dec)+'</span></div>'; });
+      tip.innerHTML=h; tip.style.display="block";
+      var pad=14, tw=tip.offsetWidth||190, lx=evt.clientX+pad;
+      if(lx+tw>window.innerWidth-8) lx=evt.clientX-tw-pad;
+      tip.style.left=lx+"px"; tip.style.top=(evt.clientY+pad)+"px";
+    });
+    svg.addEventListener("mouseleave",function(){ cx.style.display="none"; tip.style.display="none"; });
+  });
+}
+function renderNote(){
+  el("note").innerHTML = state.mode==="forward"
+    ? "Forward re-anchors to today by seeding the run from the calibration\u2019s endpoint state, then runs future policy. Edit the active scenario and compare A against B."
+    : "Two views, one validated engine. Validation reproduces the subject\u2019s known history; switch to Forward to drive future policy.";
+}
+function renderAssume(){
+  el("assume").innerHTML='<h2>What this model assumes - and what it doesn\u2019t</h2>'+
+    (DASH.assumptions||[]).map(function(a){ return '<p><b>'+a.title+'</b> '+a.body+'</p>'; }).join("");
+}
+function renderAll(){ renderModebar(); renderNote(); renderTiles(); renderConsole(); renderCharts(); }
+el("kicker").textContent=DASH.kicker; el("title").textContent=DASH.title; el("sub").textContent=DASH.subtitle;
+el("foot").textContent=DASH.footer; renderAssume(); renderAll();
+</script>
+</body></html>

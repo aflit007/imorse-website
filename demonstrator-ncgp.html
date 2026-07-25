@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E35R7H407R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-E35R7H407R');
+</script>
+<title>NCGP reform demonstrator - iMORSE</title>
+<meta name="description" content="A live, validated system-dynamics model of the Australian Research Council's National Competitive Grants Program. Reproduces ARC history from 2010, then runs the 2026 reforms ten years forward - fewer schemes, early-career salary pathways, and their effect on the research workforce. Built by Professor Andrew Flitman.">
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://imorse.com.au/demonstrator-ncgp">
+<meta property="og:site_name" content="iMORSE">
+<meta property="og:title" content="NCGP reform demonstrator - iMORSE">
+<meta property="og:description" content="Model the reform before you argue about it. A live simulator of the ARC's National Competitive Grants Program - move the levers and watch the research workforce respond over a decade.">
+<meta property="og:image" content="https://imorse.com.au/assets/og-foresight.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="iMORSE Foresight - a modelled trajectory bending away from a naive linear projection.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NCGP reform demonstrator - iMORSE">
+<meta name="twitter:description" content="Model the reform before you argue about it. A live simulator of the ARC's National Competitive Grants Program - move the levers and watch the research workforce respond over a decade.">
+<meta name="twitter:image" content="https://imorse.com.au/assets/og-foresight.png">
+<link rel="icon" href="assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Caladea:ital,wght@0,400;0,700;1,400;1,700&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site" data-screen-label="NCGP - Header">
+  <div class="wrap bar">
+    <a href="index.html" class="brand" aria-label="iMORSE home"><img src="assets/logo-primary.png" alt="iMORSE"></a>
+    <button class="mob-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="var n=document.getElementById('primary-nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="square"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="primary-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="foresight.html" class="active">Foresight</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero" data-screen-label="NCGP - Page hero">
+  <div class="wrap">
+    <div class="kicker"><a href="demonstrator-library.html" style="color:inherit">Demonstrator library</a> · Research funding</div>
+    <h1>NCGP reform: what it does to the research workforce.</h1>
+    <p class="lede">On 22 July 2026 the Australian Government announced reforms to the settings and design of the Australian Research Council's National Competitive Grants Program - a simpler scheme structure, salary pathways for early-career researchers, and a sharper alignment to national priorities. This is a live model of what follows.</p>
+  </div>
+</section>
+
+<section id="demonstrator" class="section" data-screen-label="NCGP - Live demonstrator">
+  <div class="wrap">
+    <span class="rule-red"></span>
+    <h2>A working demonstrator you can drive.</h2>
+    <p class="demo-intro">A complete, validated system-dynamics model of the NCGP - live in your browser, nothing to install. The left view reproduces documented ARC history from 2010 to 2024, so you can watch the model behave like the real program before trusting anything it says about the future. The right view re-anchors to today and runs the reforms ten years forward. Seven levers, seven charts, and two scenarios you can hold side by side. Select the forward view, then move a lever one at a time before combining them - the interesting behaviour is in the interactions.</p>
+
+    <div class="demo-meta">
+      <div class="kicker" style="margin:0">ARC National Competitive Grants Program · 2026 reforms</div>
+      <div class="demo-actions">
+        <a href="demonstrators/NCGP-demonstrator.html" target="_blank" rel="noopener">Open in full screen &#8599;</a>
+      </div>
+    </div>
+
+    <iframe class="demo-frame" src="demonstrators/NCGP-demonstrator.html" title="iMORSE system-dynamics demonstrator - Australian NCGP reform policy explorer" loading="lazy"></iframe>
+
+    <div class="demo-note">
+      <b>How to read it.</b> The model is calibrated to ARC and government data - the rising fellowship share, the near-flat-to-declining real budget, the observed career-stage shares, the growth in industry collaboration and Indigenous participation. Its behavioural relationships are the main uncertainty, and the most consequential of them are exposed as levers rather than buried in the code. Read shapes and turning points, not point values. A forward run is a scenario, not a forecast: it is an instrument for seeing how a conclusion depends on the reforms and on the assumptions you are willing to make. Where a number matters to a decision, treat it as directional.
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" data-screen-label="NCGP - Reports">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="rule-blue"></span>
+      <h2>The reports behind the model.</h2>
+      <p>Every demonstrator ships with a family of plain-language documents. Four are published here. The full suite - causal-loop structure, stock-and-flow formulation and the complete model specification - is available on request. A fifth document, the Dashboard Guide, is general rather than model-specific: it explains how to drive any iMORSE dashboard, and is worth ten minutes before you open the simulator for the first time.</p>
+    </div>
+    <div class="report-grid">
+      <a class="report-card" href="demonstrators/reports/NCGP_Reform_Demonstrator_One-Pager.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · One page</div>
+        <div class="rt">One-Pager</div>
+        <p class="rd">What it is, the seven levers you can move, and the charts it reports. The fastest way in.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/NCGP_Reform_Demonstrator_Interpretation-Brief.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Brief</div>
+        <div class="rt">Interpretation Brief</div>
+        <p class="rd">How to read each chart, and what the behaviour means for the research workforce.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/NCGP_Reform_Demonstrator_Dynamic_Walkthrough.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Walkthrough</div>
+        <div class="rt">Dynamic Walkthrough</div>
+        <p class="rd">A guided tour of the reform settings, turning point by turning point.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/NCGP_Reform_Demonstrator_Narrative-Report.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Full report</div>
+        <div class="rt">Narrative Report</div>
+        <p class="rd">The complete written analysis: structure, evidence, findings and limits.</p>
+      </a>
+      <a class="report-card wide" href="demonstrators/reports/SD_Dashboard_Guide.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · General guide</div>
+        <div class="rt">Dashboard Guide</div>
+        <p class="rd">Not specific to this model. How to read and drive any iMORSE dashboard - the two views, the levers, the scenario comparison, and what the charts are and are not telling you.</p>
+      </a>
+    </div>
+    <div style="margin-top:32px">
+      <a class="btn btn-ghost" href="contact.html">Request the full suite or start a conversation</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" data-screen-label="NCGP - Back to library">
+  <div class="wrap">
+    <div class="branch" style="margin-top:0;max-width:760px">
+      <div class="bk">Other models</div>
+      <p>This is one of several worked demonstrators. Others cover different policies and different sectors, and more are added as they are built.</p>
+      <a href="demonstrator-library.html">Back to the demonstrator library</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" data-screen-label="NCGP - Closing CTA">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <span class="rule-red"></span>
+        <h2>If a decision in front of your board or leadership team plays out over years, model it.</h2>
+        <p>A short call will confirm whether system-dynamics foresight fits the question - and what it would take to calibrate a model to your organisation.</p>
+      </div>
+      <div class="cta-right">
+        <a class="btn btn-primary-on-blue" href="contact.html">Start a conversation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site" data-screen-label="NCGP - Footer">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <img class="logo" src="assets/logo-primary.png" alt="iMORSE">
+        <div class="tag">Decoding Higher Education</div>
+        <address>
+          Flitman Research Pty Ltd<br>
+          trading as iMORSE<br>
+          ACN 113 023 733<br>
+          Melbourne &amp; Torquay, Victoria, Australia
+        </address>
+      </div>
+      <div>
+        <h4>Practice</h4>
+        <a href="about.html">About iMORSE</a>
+        <a href="services.html">Services</a>
+        <a href="services.html#governance">Governance</a>
+        <a href="foresight.html">Foresight &amp; simulation</a>
+        <a href="demonstrator-library.html">Demonstrator library</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="contact.html">Enquiry form</a>
+        <a href="mailto:aflitman@imorse.com.au">aflitman@imorse.com.au</a>
+        <a href="https://www.linkedin.com/in/higher-education-strategy-regulation-teqsa-consultant/" rel="noopener">LinkedIn</a>
+      </div>
+      <div>
+        <h4>Regions</h4>
+        <a href="about.html#reach">Australia</a>
+        <a href="about.html#reach">Asia</a>
+        <a href="about.html#reach">Middle East</a>
+        <a href="about.html#reach">Europe</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Flitman Research Pty Ltd trading as iMORSE. All rights reserved.</span>
+      <span>Engagements are confidential.</span>
+      <span>This site uses Google Analytics to measure traffic. Data is aggregated and not used to identify individuals.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

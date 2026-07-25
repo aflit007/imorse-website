@@ -544,11 +544,49 @@ footer.site .legal{
 .report-card .rt{font-family:var(--font-serif);font-weight:700;color:var(--blue);font-size:18px;margin:0 0 6px}
 .report-card .rt::after{content:" \2192";color:var(--red)}
 .report-card .rd{font-size:14px;color:var(--charcoal);margin:0}
+/* A report that applies to every demonstrator, not just this one. */
+.report-card.wide{grid-column:1 / -1;border-left-color:var(--red)}
+.report-card.wide:hover{border-left-color:var(--blue)}
+
+/* ============ Demonstrator library ============ */
+/* Quiet branch off the main flow - other worked models, added over time. */
+.branch{
+  border-top:2px solid var(--blue);background:var(--grey-50);
+  padding:18px 20px 20px;margin-top:28px;
+}
+.branch .bk{
+  font-family:var(--font-sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--grey-500);margin-bottom:8px;
+}
+.branch p{font-size:15px;margin:0 0 12px;color:var(--charcoal)}
+.branch a{font-weight:700;font-size:14px}
+.branch a::after{content:" \2192";color:var(--red)}
+
+.demo-list{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:8px}
+.demo-card{
+  display:flex;flex-direction:column;background:#fff;border:1px solid var(--grey-300);
+  border-top:3px solid var(--blue);padding:26px 28px 28px;color:var(--charcoal);
+  transition:border-top-color .15s,background .15s;
+}
+.demo-card:hover{border-top-color:var(--red);background:var(--grey-50);text-decoration:none}
+.demo-card .dk{
+  font-family:var(--font-sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--grey-500);margin-bottom:10px;
+}
+.demo-card h3{font-family:var(--font-serif);color:var(--blue);font-size:22px;margin:0 0 12px;line-height:1.25}
+.demo-card p{font-size:15px;margin:0 0 18px;flex:1}
+.demo-card .dmeta{
+  font-size:13px;color:var(--grey-500);border-top:1px solid var(--grey-200);
+  padding-top:12px;margin:0 0 14px;
+}
+.demo-card .dgo{font-weight:700;color:var(--blue);font-size:14px}
+.demo-card .dgo::after{content:" \2192";color:var(--red)}
 
 @media (max-width:960px){
   .pillars-5{grid-template-columns:1fr}
   .pillars-5 .pillar{grid-column:auto !important}
   .report-grid{grid-template-columns:1fr}
+  .demo-list{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr}
   .steps .step{border-right:0;border-bottom:1px solid var(--grey-300);padding:16px 0 14px}
   .steps .step:last-child{border-bottom:0}
