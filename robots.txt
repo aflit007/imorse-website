@@ -1,0 +1,5 @@
+# imorse.com.au
+User-agent: *
+Allow: /
+
+Sitemap: https://imorse.com.au/sitemap.xml
