@@ -592,3 +592,9 @@ footer.site .legal{
   .steps .step:last-child{border-bottom:0}
   .demo-frame{height:1180px}
 }
+
+/* ============ Deep links ============ */
+/* Hero buttons on a page-hero (dark blue band). */
+.page-hero .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+/* Links such as /demonstrator-immigration#demonstrator land below the sticky header, not under it. */
+section[id],.demo-card[id],.report-card[id]{scroll-margin-top:96px}

@@ -26,13 +26,19 @@
   </url>
   <url>
     <loc>https://imorse.com.au/demonstrator-library</loc>
-    <lastmod>2026-09-14</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://imorse.com.au/demonstrator-ncgp</loc>
     <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://imorse.com.au/demonstrator-immigration</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Google Analytics (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E35R7H407R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-E35R7H407R');
+</script>
+<title>Migration settings compared - demonstrator - iMORSE</title>
+<meta name="description" content="A live, validated system-dynamics model of Australian net overseas migration, jobs, growth and international education. Compare the Labor, Coalition and One Nation settings across three federal terms to May 2034. Built by Professor Andrew Flitman.">
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://imorse.com.au/demonstrator-immigration">
+<meta property="og:site_name" content="iMORSE">
+<meta property="og:title" content="Migration settings compared - demonstrator - iMORSE">
+<meta property="og:description" content="Move the levers and compare the Labor, Coalition and One Nation migration settings over three federal terms - what each does to migration, jobs, growth and international education by May 2034.">
+<meta property="og:image" content="https://imorse.com.au/assets/og-foresight.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="iMORSE Foresight - a modelled trajectory bending away from a naive linear projection.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Migration settings compared - demonstrator - iMORSE">
+<meta name="twitter:description" content="Move the levers and compare the Labor, Coalition and One Nation migration settings over three federal terms - what each does to migration, jobs, growth and international education by May 2034.">
+<meta name="twitter:image" content="https://imorse.com.au/assets/og-foresight.png">
+<link rel="icon" href="assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Caladea:ital,wght@0,400;0,700;1,400;1,700&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site" data-screen-label="Immigration - Header">
+  <div class="wrap bar">
+    <a href="index.html" class="brand" aria-label="iMORSE home"><img src="assets/logo-primary.png" alt="iMORSE"></a>
+    <button class="mob-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="var n=document.getElementById('primary-nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="square"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav id="primary-nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="foresight.html" class="active">Foresight</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-hero" data-screen-label="Immigration - Page hero">
+  <div class="wrap">
+    <div class="kicker"><a href="demonstrator-library.html" style="color:inherit">Demonstrator library</a> · Migration, the economy &amp; higher education</div>
+    <h1>Migration settings: what they do to jobs, growth and international education.</h1>
+    <p class="lede">Three parties have put migration settings before voters: the Labor package announced on 17 September 2026, the Coalition's rule tying migration to housing completions, and One Nation's package. This is a live model of what each does over the next three federal terms, to May 2034.</p>
+    <div class="cta">
+      <a class="btn btn-primary-on-blue" href="#demonstrator">Open the demonstrator</a>
+      <a class="btn btn-secondary" href="#reports">Read the reports</a>
+    </div>
+  </div>
+</section>
+
+<section id="demonstrator" class="section" data-screen-label="Immigration - Live demonstrator">
+  <div class="wrap">
+    <span class="rule-red"></span>
+    <h2>A working demonstrator you can drive.</h2>
+    <p class="demo-intro">A complete system-dynamics model of net overseas migration, the labour market, growth and the international education sector - live in your browser, nothing to install. It starts from the model's state in October 2026 and runs to the end of May 2034, with a dash-dot line at the end of each federal term. Before it was allowed to look forward, the model was calibrated to 105 published series from 2018 to 2026 and checked against that record; the evidence is in the Narrative Report below. Thirty-one levers sit under headings, each party's package first. Fifteen presets set a whole configuration in one click, and two scenarios run side by side across twenty-five numbered charts. Start with a preset, then move one lever at a time.</p>
+
+    <div class="demo-meta">
+      <div class="kicker" style="margin:0">Labor · Coalition · One Nation · three federal terms to May 2034</div>
+      <div class="demo-actions">
+        <a href="demonstrators/immigration-demonstrator.html" target="_blank" rel="noopener">Open in full screen &#8599;</a>
+      </div>
+    </div>
+
+    <iframe class="demo-frame" src="demonstrators/immigration-demonstrator.html" title="iMORSE system-dynamics demonstrator - Australian migration settings, jobs, growth and international education" loading="lazy"></iframe>
+
+    <div class="demo-note">
+      <b>How to read it.</b> The model takes no side: every party's settings run through the same calibrated system, and the charts report what follows. Read shapes, turning points and the gap between two scenarios, not the third decimal place. The behavioural relationships are the main uncertainty, and the most consequential of them - how quickly new residents' spending becomes jobs, productivity growth, underlying visa demand - are exposed as levers rather than buried in the code. A forward run is a scenario, not a forecast. Where a number matters to a decision, treat it as directional.
+    </div>
+  </div>
+</section>
+
+<section id="reports" class="section section-alt" data-screen-label="Immigration - Reports">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="rule-blue"></span>
+      <h2>The reports behind the model.</h2>
+      <p>Six documents accompany this demonstrator. If the higher education sector is your interest, start with the Higher Education Brief; for the model as a whole, start with the One-Pager. This model has its own Dashboard Guide, because it opens straight onto the forward view rather than the validation view the general iMORSE guide describes. The full suite - causal-loop structure, stock-and-flow formulation and the complete model specification - is available on request.</p>
+    </div>
+    <div class="report-grid">
+      <a id="brief" class="report-card wide" href="demonstrators/reports/Immigration-Policy-Higher-Education_Brief_AF.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Sector brief</div>
+        <div class="rt">Higher Education Brief</div>
+        <p class="rd">International education under three migration settings. What the model shows for the sector to May 2034 - commencements, allocation use under Ministerial Direction 115, tuition income and three example providers - and why each setting produces a different outcome.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/Immigration-Policy_One-Pager_AF.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Two pages</div>
+        <div class="rt">One-Pager</div>
+        <p class="rd">What the simulator is, the levers you can move and the charts it reports. The fastest way in.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/Immigration-Policy_Interpretation-Brief_AF.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Brief</div>
+        <div class="rt">Interpretation Brief</div>
+        <p class="rd">What the model is for, what to believe, and what it tells us about each party's settings.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/Immigration-Policy_Dynamic-Walkthrough_AF.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Walkthrough</div>
+        <div class="rt">Dynamic Walkthrough</div>
+        <p class="rd">A guided run of the simulator from its own numbers: the baseline, each party's settings, an A/B comparison and four experiments, step by step.</p>
+      </a>
+      <a class="report-card" href="demonstrators/reports/Immigration-Policy_Narrative_Report_AF.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Full report</div>
+        <div class="rt">Narrative Report</div>
+        <p class="rd">The complete written analysis: structure, evidence, the record against published data, findings and limits.</p>
+      </a>
+      <a class="report-card wide" href="demonstrators/reports/Immigration-Policy_Dashboard-Guide_AF.pdf" target="_blank" rel="noopener">
+        <div class="rk">PDF · Guide to this model</div>
+        <div class="rt">Dashboard Guide</div>
+        <p class="rd">How to read and drive this forward-only dashboard - the election lines, the lever headings, the presets, the A/B comparison and how to look up what any line on a chart means. One page, worth reading before you open the simulator.</p>
+      </a>
+    </div>
+    <div style="margin-top:32px">
+      <a class="btn btn-ghost" href="contact.html">Request the full suite or start a conversation</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" data-screen-label="Immigration - Back to library">
+  <div class="wrap">
+    <div class="branch" style="margin-top:0;max-width:760px">
+      <div class="bk">Other models</div>
+      <p>This is one of several worked demonstrators. Others cover different policies and different sectors, and more are added as they are built.</p>
+      <a href="demonstrator-library.html">Back to the demonstrator library</a>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" data-screen-label="Immigration - Closing CTA">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <span class="rule-red"></span>
+        <h2>If a decision in front of your board or leadership team plays out over years, model it.</h2>
+        <p>A short call will confirm whether system-dynamics foresight fits the question - and what it would take to calibrate a model to your organisation.</p>
+      </div>
+      <div class="cta-right">
+        <a class="btn btn-primary-on-blue" href="contact.html">Start a conversation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site" data-screen-label="Immigration - Footer">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <img class="logo" src="assets/logo-primary.png" alt="iMORSE">
+        <div class="tag">Decoding Higher Education</div>
+        <address>
+          Flitman Research Pty Ltd<br>
+          trading as iMORSE<br>
+          ACN 113 023 733<br>
+          Melbourne &amp; Torquay, Victoria, Australia
+        </address>
+      </div>
+      <div>
+        <h4>Practice</h4>
+        <a href="about.html">About iMORSE</a>
+        <a href="services.html">Services</a>
+        <a href="services.html#governance">Governance</a>
+        <a href="foresight.html">Foresight &amp; simulation</a>
+        <a href="demonstrator-library.html">Demonstrator library</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="contact.html">Enquiry form</a>
+        <a href="mailto:aflitman@imorse.com.au">aflitman@imorse.com.au</a>
+        <a href="https://www.linkedin.com/in/higher-education-strategy-regulation-teqsa-consultant/" rel="noopener">LinkedIn</a>
+      </div>
+      <div>
+        <h4>Regions</h4>
+        <a href="about.html#reach">Australia</a>
+        <a href="about.html#reach">Asia</a>
+        <a href="about.html#reach">Middle East</a>
+        <a href="about.html#reach">Europe</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 Flitman Research Pty Ltd trading as iMORSE. All rights reserved.</span>
+      <span>Engagements are confidential.</span>
+      <span>This site uses Google Analytics to measure traffic. Data is aggregated and not used to identify individuals.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
